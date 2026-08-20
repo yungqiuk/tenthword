@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Читалка — чтение с постепенным переводом</title>
+<meta name="description" content="iOS-читалка: русская книга, в которой часть слов заменена английскими. Долю перевода задаёт кольцо. Работает офлайн.">
+<style>
+  :root {
+    --bg: #0E1625;
+    --card: #16202E;
+    --ink: #EFF1F5;
+    --muted: #97A2B4;
+    --accent: #F9AD37;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 48px 22px 80px; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 0 0 12px; }
+  h2 { font-size: 22px; margin: 40px 0 12px; }
+  p { margin: 0 0 16px; }
+  .lead { font-size: 19px; color: var(--muted); }
+  .sample {
+    background: var(--card); border-radius: 14px; padding: 22px 24px;
+    font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.7;
+    margin: 28px 0;
+  }
+  .en { color: var(--accent); }
+  nav a { color: var(--accent); text-decoration: none; margin-right: 18px; }
+  nav a:hover { text-decoration: underline; }
+  footer { color: var(--muted); font-size: 14px; margin-top: 56px; }
+  ul { padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  .en-block { color: var(--muted); border-top: 1px solid #26303F; margin-top: 48px; padding-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Читалка</h1>
+  <p class="lead">Русская книга, в которой часть слов заменена английскими.
+     Долю перевода вы задаёте сами — кольцом, от нуля до ста процентов.</p>
+
+  <div class="sample">
+    Сегодня <span class="en">morning</span> я встал с <span class="en">bed</span>,
+    чтобы пойти в сад за <span class="en">apples</span>.
+  </div>
+
+  <p>Мозг достраивает смысл из контекста. Не достроил — тап по слову показывает
+     перевод и запоминает его. Слово, которое вы выучили, освобождает свой процент
+     под новое.</p>
+
+  <h2>Как это устроено</h2>
+  <ul>
+    <li>Начните с 5–10%: одно слово из десяти, читается почти как обычная книга.</li>
+    <li>Порядок слов фиксирован: план на 20% содержит в себе весь план на 10%.
+        Текст не перетасовывается, когда вы крутите кольцо.</li>
+    <li>Имена собственные и многозначные слова не переводятся никогда.</li>
+    <li>Форматы: EPUB, FB2, TXT. Свои книги — через «Файлы».</li>
+  </ul>
+
+  <h2>Всё офлайн</h2>
+  <p>Словарь лежит внутри приложения. Ни одна книга и ни одно слово не уходят
+     в сеть: интернет нужен только для покупки и её восстановления.
+     Мы не собираем о вас никаких данных.</p>
+
+  <h2>Цена</h2>
+  <p>Три дня бесплатно, целиком. Потом — десять страниц в день бесплатно
+     или разовая покупка £4.99 навсегда. Не подписка. Рекламы нет.</p>
+
+  <nav>
+    <a href="privacy.html">Политика конфиденциальности</a>
+    <a href="support.html">Поддержка</a>
+    <a href="terms.html">Условия использования</a>
+  </nav>
+
+  <div class="en-block">
+    <h2 style="margin-top:0">In English</h2>
+    <p>Chitalka is an iOS reader for Russian books that gradually replaces
+       words with their English equivalents. You choose how many — from 0 to 100% —
+       and your brain fills in the rest from context. Tap any English word to see
+       what it replaced. Everything works offline; no data is collected.</p>
+    <p><a href="privacy.html#en">Privacy policy</a> ·
+       <a href="support.html#en">Support</a> ·
+       <a href="terms.html#en">Terms of use</a></p>
+  </div>
+
+  <footer>
+    Словарь построен на данных Викисловаря (CC BY-SA 4.0) и частотном списке
+    FrequencyWords (MIT).
+  </footer>
+
+</div>
+</body>
+</html>

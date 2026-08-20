@@ -1,0 +1,36 @@
+{
+  "identifier" : "A1B2C3D4",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "chitalka-premium",
+      "localizations" : [
+        {
+          "description" : "Снимает ограничение в десять страниц в день. Разовая покупка, не подписка.",
+          "displayName" : "Полный доступ",
+          "locale" : "ru"
+        },
+        {
+          "description" : "Removes the ten-pages-a-day limit. One-time purchase, not a subscription.",
+          "displayName" : "Full access",
+          "locale" : "en_GB"
+        }
+      ],
+      "productID" : "com.chitalka.premium",
+      "referenceName" : "Полный доступ",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "chitalka",
+    "_developerTeamID" : "",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

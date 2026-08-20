@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Читалка — поддержка</title>
+<style>
+  :root { --bg:#0E1625; --card:#16202E; --ink:#EFF1F5; --muted:#97A2B4; --accent:#F9AD37; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width:720px; margin:0 auto; padding:48px 22px 80px; }
+  h1 { font-size:30px; margin:0 0 8px; }
+  h2 { font-size:20px; margin:34px 0 10px; }
+  h3 { font-size:17px; margin:24px 0 6px; }
+  p, li { margin:0 0 14px; }
+  ul { padding-left:22px; }
+  a { color:var(--accent); }
+  .mail { background:var(--card); border-radius:12px; padding:16px 18px; margin:20px 0; }
+  .en-block { color:var(--muted); border-top:1px solid #26303F; margin-top:52px; padding-top:24px; }
+  .en-block h1, .en-block h2, .en-block h3 { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Поддержка</h1>
+  <p>Пишите — отвечаем в течение двух рабочих дней.</p>
+
+  <div class="mail">
+    <!-- ЗАМЕНИТЬ на реальный адрес перед подачей в App Store:
+         этот же адрес указывается в App Store Connect в поле Support URL/email. -->
+    <strong>support@chitalka.app</strong>
+  </div>
+
+  <h2>Частые вопросы</h2>
+
+  <h3>Как добавить книгу?</h3>
+  <p>На полке нажмите «+» и выберите файл в «Файлах». Поддерживаются EPUB, FB2
+     и TXT. Можно и наоборот: открыть книгу в другом приложении и выбрать
+     «Поделиться» → «Читалка».</p>
+
+  <h3>Почему некоторые слова не переводятся даже на 100%?</h3>
+  <p>Три причины. Имена собственные не переводятся никогда. Многозначные слова
+     («ключ» — key или spring) пропускаются: без контекста мы выберем неверно.
+     И слова, которых нет в словаре, — он большой, но не бесконечный.
+     Фактическую долю показывает подпись под кольцом.</p>
+
+  <h3>Я выучил слово. Как убрать его из перевода?</h3>
+  <p>Тапните по слову и нажмите «Больше не переводить». Оно перестанет
+     подменяться, а освободившийся процент займёт следующее слово.</p>
+
+  <h3>Что даёт покупка?</h3>
+  <p>Снимает ограничение в десять страниц в день. Это разовая покупка,
+     а не подписка: заплатили один раз — работает всегда.</p>
+
+  <h3>Купил на одном устройстве, как перенести на другое?</h3>
+  <p>Настройки → «Восстановить покупку». Покупка привязана к вашему Apple ID.</p>
+
+  <h3>Книга открылась с кракозябрами</h3>
+  <p>Скорее всего, TXT в старой кодировке. Пересохраните файл в UTF-8 — это умеет
+     любой текстовый редактор. EPUB и FB2 такой проблемы не имеют.</p>
+
+  <h3>Приложение не переводит вообще</h3>
+  <p>Проверьте, что доля перевода не на нуле: кольцо в правом верхнем углу
+     экрана чтения.</p>
+
+  <div class="en-block" id="en">
+    <h1>Support</h1>
+    <p>Write to us — we answer within two business days.</p>
+    <div class="mail"><strong>support@chitalka.app</strong></div>
+
+    <h3>How do I add a book?</h3>
+    <p>Tap “+” on the shelf and pick a file in Files. EPUB, FB2 and TXT are
+       supported. You can also share a book from another app into Chitalka.</p>
+
+    <h3>Why are some words never translated?</h3>
+    <p>Proper nouns are never replaced. Ambiguous words are skipped, because
+       without context the choice would be wrong. And some words are simply not
+       in the dictionary. The caption under the ring shows the actual share.</p>
+
+    <h3>What does the purchase give me?</h3>
+    <p>It removes the ten-pages-a-day limit. It is a one-time purchase,
+       not a subscription.</p>
+
+    <h3>How do I restore a purchase?</h3>
+    <p>Settings → “Restore purchase”. The purchase is tied to your Apple ID.</p>
+  </div>
+
+</div>
+</body>
+</html>

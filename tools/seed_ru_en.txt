@@ -1,0 +1,144 @@
+# Словарь-затравка: 120 частых слов, чтобы приложение можно было запустить
+# до того, как соберётся полный словарь из Викисловаря.
+#
+# Формат: лемма | english | толкование | часть речи | ранг частотности
+# Ранги приблизительные, по порядку частотности в художественной прозе.
+#
+# Собирается командой:  python3 tools/build_dictionary.py --sample
+
+день | day | день | noun | 180
+рука | hand | рука, кисть | noun | 190
+глаз | eye | глаз | noun | 210
+время | time | время | noun | 150
+человек | person | человек | noun | 120
+дом | house | дом | noun | 260
+голова | head | голова | noun | 290
+дверь | door | дверь | noun | 340
+окно | window | окно | noun | 470
+стол | table | стол | noun | 520
+ночь | night | ночь | noun | 380
+утро | morning | утро | noun | 620
+вечер | evening | вечер | noun | 660
+вода | water | вода | noun | 410
+земля | earth | земля, почва | noun | 430
+небо | sky | небо | noun | 1060
+солнце | sun | солнце | noun | 980
+воздух | air | воздух | noun | 1120
+дерево | tree | дерево | noun | 1290
+трава | grass | трава | noun | 2900
+сад | garden | сад | noun | 1980
+лес | forest | лес | noun | 1240
+дорога | road | дорога | noun | 700
+улица | street | улица | noun | 750
+город | city | город | noun | 640
+деревня | village | деревня | noun | 2200
+река | river | река | noun | 1580
+море | sea | море | noun | 1370
+гора | mountain | гора | noun | 1810
+камень | stone | камень | noun | 1920
+огонь | fire | огонь | noun | 1650
+снег | snow | снег | noun | 2050
+дождь | rain | дождь | noun | 2480
+ветер | wind | ветер | noun | 1730
+кровать | bed | кровать, постель | noun | 1450
+стул | chair | стул | noun | 2600
+книга | book | книга | noun | 890
+письмо | letter | письмо | noun | 1490
+слово | word | слово | noun | 330
+голос | voice | голос | noun | 620
+лицо | face | лицо | noun | 350
+нога | leg | нога | noun | 690
+сердце | heart | сердце | noun | 830
+жизнь | life | жизнь | noun | 240
+смерть | death | смерть | noun | 1080
+друг | friend | друг | noun | 570
+мать | mother | мать | noun | 610
+отец | father | отец | noun | 590
+сын | son | сын | noun | 900
+дочь | daughter | дочь | noun | 1400
+женщина | woman | женщина | noun | 720
+мужчина | man | мужчина | noun | 1150
+ребёнок | child | ребёнок | noun | 810
+собака | dog | собака | noun | 1530
+кошка | cat | кошка | noun | 2900
+лошадь | horse | horse | noun | 1690
+птица | bird | птица | noun | 1890
+яблоко | apple | яблоко | noun | 4300
+хлеб | bread | хлеб | noun | 2100
+вино | wine | вино | noun | 2700
+чай | tea | чай | noun | 2350
+забор | fence | забор | noun | 5200
+калитка | gate | калитка | noun | 8700
+корзина | basket | корзина | noun | 6100
+тропинка | path | тропинка | noun | 7900
+роса | dew | роса | noun | 12800
+колокол | bell | колокол | noun | 9800
+идти | go | идти, ходить | verb | 200
+пойти | go | пойти | verb | 240
+прийти | come | прийти | verb | 330
+уйти | leave | уйти | verb | 480
+войти | enter | войти | verb | 720
+выйти | go out | выйти | verb | 450
+бежать | run | бежать | verb | 1340
+стоять | stand | стоять | verb | 380
+сидеть | sit | сидеть | verb | 560
+лежать | lie | лежать | verb | 780
+встать | get up | встать, подняться | verb | 810
+сесть | sit down | сесть | verb | 900
+смотреть | look | смотреть | verb | 300
+видеть | see | видеть | verb | 260
+слышать | hear | слышать | verb | 640
+говорить | speak | говорить | verb | 130
+сказать | say | сказать | verb | 100
+спросить | ask | спросить | verb | 520
+ответить | answer | ответить | verb | 610
+думать | think | думать | verb | 350
+знать | know | знать | verb | 170
+понять | understand | понять | verb | 420
+помнить | remember | помнить | verb | 970
+забыть | forget | забыть | verb | 1130
+любить | love | любить | verb | 490
+ждать | wait | ждать | verb | 560
+взять | take | взять | verb | 310
+дать | give | дать | verb | 280
+держать | hold | держать | verb | 870
+поднять | pick up | поднять | verb | 700
+открыть | open | открыть | verb | 390
+закрыть | close | закрыть | verb | 750
+читать | read | читать | verb | 1020
+писать | write | писать | verb | 940
+работать | work | работать | verb | 660
+жить | live | жить | verb | 290
+умереть | die | умереть | verb | 1250
+спать | sleep | спать | verb | 1310
+есть | eat | есть, кушать | verb | 1080
+пить | drink | пить | verb | 1420
+блестеть | glisten | блестеть | verb | 7400
+лаять | bark | лаять | verb | 11200
+звонить | ring | звонить | verb | 3300
+большой | big | большой | adjective | 220
+маленький | small | маленький | adjective | 490
+старый | old | старый | adjective | 310
+молодой | young | молодой | adjective | 680
+новый | new | новый | adjective | 270
+хороший | good | хороший | adjective | 250
+плохой | bad | плохой | adjective | 1190
+белый | white | белый | adjective | 730
+чёрный | black | чёрный | adjective | 790
+красный | red | красный | adjective | 1050
+холодный | cold | холодный | adjective | 1670
+тёплый | warm | тёплый | adjective | 2280
+светлый | bright | светлый | adjective | 2450
+тёмный | dark | тёмный | adjective | 1990
+длинный | long | длинный | adjective | 1750
+спокойный | calm | спокойный | adjective | 3100
+соседский | neighbour's | соседский | adjective | 9100
+быстро | quickly | быстро | adverb | 880
+медленно | slowly | медленно | adverb | 2100
+далеко | far away | далеко | adverb | 1210
+близко | near | близко | adverb | 2740
+громко | loudly | громко | adverb | 2960
+тихо | quietly | тихо | adverb | 1560
+вдруг | suddenly | вдруг | adverb | 540
+всегда | always | всегда | adverb | 620
+никогда | never | никогда | adverb | 830

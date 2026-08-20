@@ -1,0 +1,1119 @@
+{
+ "_comment": "Сгенерировано tools/make_golden.py. Руками не править.",
+ "text": "Сегодня утром я встал с кровати, чтобы пойти в сад за яблоками. Воздух был холодный, и трава ещё блестела от росы. Соседская собака бежала вдоль забора и лаяла на птиц. Я поднял корзину, открыл старую калитку и медленно пошёл по тропинке между деревьями. Небо становилось светлее, где-то далеко звонил колокол, и день казался длинным и спокойным. У калитки меня ждал Пётр.",
+ "lemmas": {
+  "утром": "утро",
+  "встал": "встать",
+  "кровати": "кровать",
+  "пойти": "пойти",
+  "сад": "сад",
+  "яблоками": "яблоко",
+  "воздух": "воздух",
+  "был": "быть",
+  "холодный": "холодный",
+  "трава": "трава",
+  "блестела": "блестеть",
+  "росы": "роса",
+  "соседская": "соседский",
+  "собака": "собака",
+  "бежала": "бежать",
+  "забора": "забор",
+  "лаяла": "лаять",
+  "птиц": "птица",
+  "поднял": "поднять",
+  "корзину": "корзина",
+  "открыл": "открыть",
+  "старую": "старый",
+  "калитку": "калитка",
+  "калитки": "калитка",
+  "медленно": "медленно",
+  "пошёл": "пойти",
+  "тропинке": "тропинка",
+  "деревьями": "дерево",
+  "небо": "небо",
+  "становилось": "становиться",
+  "светлее": "светлый",
+  "далеко": "далеко",
+  "звонил": "звонить",
+  "колокол": "колокол",
+  "день": "день",
+  "казался": "казаться",
+  "длинным": "длинный",
+  "спокойным": "спокойный",
+  "меня": "я",
+  "ждал": "ждать",
+  "пётр": "пётр"
+ },
+ "entries": {
+  "утро": {
+   "english": "morning",
+   "pos": "noun",
+   "rank": 620
+  },
+  "встать": {
+   "english": "get up",
+   "pos": "verb",
+   "rank": 810
+  },
+  "кровать": {
+   "english": "bed",
+   "pos": "noun",
+   "rank": 1450
+  },
+  "пойти": {
+   "english": "go",
+   "pos": "verb",
+   "rank": 240
+  },
+  "сад": {
+   "english": "garden",
+   "pos": "noun",
+   "rank": 1980
+  },
+  "яблоко": {
+   "english": "apple",
+   "pos": "noun",
+   "rank": 4300
+  },
+  "воздух": {
+   "english": "air",
+   "pos": "noun",
+   "rank": 1120
+  },
+  "холодный": {
+   "english": "cold",
+   "pos": "adjective",
+   "rank": 1670
+  },
+  "трава": {
+   "english": "grass",
+   "pos": "noun",
+   "rank": 2900
+  },
+  "блестеть": {
+   "english": "glisten",
+   "pos": "verb",
+   "rank": 7400
+  },
+  "роса": {
+   "english": "dew",
+   "pos": "noun",
+   "rank": 12800
+  },
+  "соседский": {
+   "english": "neighbour's",
+   "pos": "adjective",
+   "rank": 9100
+  },
+  "собака": {
+   "english": "dog",
+   "pos": "noun",
+   "rank": 1530
+  },
+  "бежать": {
+   "english": "run",
+   "pos": "verb",
+   "rank": 1340
+  },
+  "забор": {
+   "english": "fence",
+   "pos": "noun",
+   "rank": 5200
+  },
+  "лаять": {
+   "english": "bark",
+   "pos": "verb",
+   "rank": 11200
+  },
+  "птица": {
+   "english": "bird",
+   "pos": "noun",
+   "rank": 1890
+  },
+  "поднять": {
+   "english": "pick up",
+   "pos": "verb",
+   "rank": 700
+  },
+  "корзина": {
+   "english": "basket",
+   "pos": "noun",
+   "rank": 6100
+  },
+  "открыть": {
+   "english": "open",
+   "pos": "verb",
+   "rank": 390
+  },
+  "старый": {
+   "english": "old",
+   "pos": "adjective",
+   "rank": 310
+  },
+  "калитка": {
+   "english": "gate",
+   "pos": "noun",
+   "rank": 8700
+  },
+  "медленно": {
+   "english": "slowly",
+   "pos": "adverb",
+   "rank": 2100
+  },
+  "тропинка": {
+   "english": "path",
+   "pos": "noun",
+   "rank": 7900
+  },
+  "дерево": {
+   "english": "tree",
+   "pos": "noun",
+   "rank": 1290
+  },
+  "небо": {
+   "english": "sky",
+   "pos": "noun",
+   "rank": 1060
+  },
+  "светлый": {
+   "english": "bright",
+   "pos": "adjective",
+   "rank": 2450
+  },
+  "далеко": {
+   "english": "far away",
+   "pos": "adverb",
+   "rank": 1210
+  },
+  "звонить": {
+   "english": "ring",
+   "pos": "verb",
+   "rank": 3300
+  },
+  "колокол": {
+   "english": "bell",
+   "pos": "noun",
+   "rank": 9800
+  },
+  "день": {
+   "english": "day",
+   "pos": "noun",
+   "rank": 180
+  },
+  "длинный": {
+   "english": "long",
+   "pos": "adjective",
+   "rank": 1750
+  },
+  "спокойный": {
+   "english": "calm",
+   "pos": "adjective",
+   "rank": 3100
+  },
+  "ждать": {
+   "english": "wait",
+   "pos": "verb",
+   "rank": 560
+  },
+  "ключ": {
+   "english": "key",
+   "pos": "noun",
+   "rank": 2600,
+   "ambiguous": true
+  },
+  "я": {
+   "english": "I",
+   "pos": "pronoun",
+   "rank": 12
+  },
+  "с": {
+   "english": "with",
+   "pos": "preposition",
+   "rank": 21
+  },
+  "в": {
+   "english": "in",
+   "pos": "preposition",
+   "rank": 3
+  },
+  "за": {
+   "english": "behind",
+   "pos": "preposition",
+   "rank": 48
+  },
+  "и": {
+   "english": "and",
+   "pos": "conjunction",
+   "rank": 2
+  },
+  "от": {
+   "english": "from",
+   "pos": "preposition",
+   "rank": 74
+  },
+  "вдоль": {
+   "english": "along",
+   "pos": "preposition",
+   "rank": 1900
+  },
+  "на": {
+   "english": "on",
+   "pos": "preposition",
+   "rank": 6
+  },
+  "по": {
+   "english": "along",
+   "pos": "preposition",
+   "rank": 31
+  },
+  "между": {
+   "english": "between",
+   "pos": "preposition",
+   "rank": 420
+  },
+  "у": {
+   "english": "at",
+   "pos": "preposition",
+   "rank": 55
+  },
+  "чтобы": {
+   "english": "in order to",
+   "pos": "conjunction",
+   "rank": 96
+  },
+  "быть": {
+   "english": "be",
+   "pos": "verb",
+   "rank": 8
+  },
+  "становиться": {
+   "english": "become",
+   "pos": "verb",
+   "rank": 340
+  },
+  "казаться": {
+   "english": "seem",
+   "pos": "verb",
+   "rank": 470
+  }
+ },
+ "functionWords": [
+  "быть",
+  "в",
+  "вдоль",
+  "где-то",
+  "ещё",
+  "за",
+  "и",
+  "казаться",
+  "между",
+  "на",
+  "от",
+  "по",
+  "с",
+  "становиться",
+  "у",
+  "чтобы",
+  "я"
+ ],
+ "learned": [],
+ "totalWords": 61,
+ "tokens": [
+  {
+   "surface": "Сегодня",
+   "utf16Offset": 0,
+   "utf16Length": 7,
+   "ordinal": 0,
+   "startsSentence": true
+  },
+  {
+   "surface": "утром",
+   "utf16Offset": 8,
+   "utf16Length": 5,
+   "ordinal": 1,
+   "startsSentence": false
+  },
+  {
+   "surface": "я",
+   "utf16Offset": 14,
+   "utf16Length": 1,
+   "ordinal": 2,
+   "startsSentence": false
+  },
+  {
+   "surface": "встал",
+   "utf16Offset": 16,
+   "utf16Length": 5,
+   "ordinal": 3,
+   "startsSentence": false
+  },
+  {
+   "surface": "с",
+   "utf16Offset": 22,
+   "utf16Length": 1,
+   "ordinal": 4,
+   "startsSentence": false
+  },
+  {
+   "surface": "кровати",
+   "utf16Offset": 24,
+   "utf16Length": 7,
+   "ordinal": 5,
+   "startsSentence": false
+  },
+  {
+   "surface": "чтобы",
+   "utf16Offset": 33,
+   "utf16Length": 5,
+   "ordinal": 6,
+   "startsSentence": false
+  },
+  {
+   "surface": "пойти",
+   "utf16Offset": 39,
+   "utf16Length": 5,
+   "ordinal": 7,
+   "startsSentence": false
+  },
+  {
+   "surface": "в",
+   "utf16Offset": 45,
+   "utf16Length": 1,
+   "ordinal": 8,
+   "startsSentence": false
+  },
+  {
+   "surface": "сад",
+   "utf16Offset": 47,
+   "utf16Length": 3,
+   "ordinal": 9,
+   "startsSentence": false
+  },
+  {
+   "surface": "за",
+   "utf16Offset": 51,
+   "utf16Length": 2,
+   "ordinal": 10,
+   "startsSentence": false
+  },
+  {
+   "surface": "яблоками",
+   "utf16Offset": 54,
+   "utf16Length": 8,
+   "ordinal": 11,
+   "startsSentence": false
+  },
+  {
+   "surface": "Воздух",
+   "utf16Offset": 64,
+   "utf16Length": 6,
+   "ordinal": 12,
+   "startsSentence": true
+  },
+  {
+   "surface": "был",
+   "utf16Offset": 71,
+   "utf16Length": 3,
+   "ordinal": 13,
+   "startsSentence": false
+  },
+  {
+   "surface": "холодный",
+   "utf16Offset": 75,
+   "utf16Length": 8,
+   "ordinal": 14,
+   "startsSentence": false
+  },
+  {
+   "surface": "и",
+   "utf16Offset": 85,
+   "utf16Length": 1,
+   "ordinal": 15,
+   "startsSentence": false
+  },
+  {
+   "surface": "трава",
+   "utf16Offset": 87,
+   "utf16Length": 5,
+   "ordinal": 16,
+   "startsSentence": false
+  },
+  {
+   "surface": "ещё",
+   "utf16Offset": 93,
+   "utf16Length": 3,
+   "ordinal": 17,
+   "startsSentence": false
+  },
+  {
+   "surface": "блестела",
+   "utf16Offset": 97,
+   "utf16Length": 8,
+   "ordinal": 18,
+   "startsSentence": false
+  },
+  {
+   "surface": "от",
+   "utf16Offset": 106,
+   "utf16Length": 2,
+   "ordinal": 19,
+   "startsSentence": false
+  },
+  {
+   "surface": "росы",
+   "utf16Offset": 109,
+   "utf16Length": 4,
+   "ordinal": 20,
+   "startsSentence": false
+  },
+  {
+   "surface": "Соседская",
+   "utf16Offset": 115,
+   "utf16Length": 9,
+   "ordinal": 21,
+   "startsSentence": true
+  },
+  {
+   "surface": "собака",
+   "utf16Offset": 125,
+   "utf16Length": 6,
+   "ordinal": 22,
+   "startsSentence": false
+  },
+  {
+   "surface": "бежала",
+   "utf16Offset": 132,
+   "utf16Length": 6,
+   "ordinal": 23,
+   "startsSentence": false
+  },
+  {
+   "surface": "вдоль",
+   "utf16Offset": 139,
+   "utf16Length": 5,
+   "ordinal": 24,
+   "startsSentence": false
+  },
+  {
+   "surface": "забора",
+   "utf16Offset": 145,
+   "utf16Length": 6,
+   "ordinal": 25,
+   "startsSentence": false
+  },
+  {
+   "surface": "и",
+   "utf16Offset": 152,
+   "utf16Length": 1,
+   "ordinal": 26,
+   "startsSentence": false
+  },
+  {
+   "surface": "лаяла",
+   "utf16Offset": 154,
+   "utf16Length": 5,
+   "ordinal": 27,
+   "startsSentence": false
+  },
+  {
+   "surface": "на",
+   "utf16Offset": 160,
+   "utf16Length": 2,
+   "ordinal": 28,
+   "startsSentence": false
+  },
+  {
+   "surface": "птиц",
+   "utf16Offset": 163,
+   "utf16Length": 4,
+   "ordinal": 29,
+   "startsSentence": false
+  },
+  {
+   "surface": "Я",
+   "utf16Offset": 169,
+   "utf16Length": 1,
+   "ordinal": 30,
+   "startsSentence": true
+  },
+  {
+   "surface": "поднял",
+   "utf16Offset": 171,
+   "utf16Length": 6,
+   "ordinal": 31,
+   "startsSentence": false
+  },
+  {
+   "surface": "корзину",
+   "utf16Offset": 178,
+   "utf16Length": 7,
+   "ordinal": 32,
+   "startsSentence": false
+  },
+  {
+   "surface": "открыл",
+   "utf16Offset": 187,
+   "utf16Length": 6,
+   "ordinal": 33,
+   "startsSentence": false
+  },
+  {
+   "surface": "старую",
+   "utf16Offset": 194,
+   "utf16Length": 6,
+   "ordinal": 34,
+   "startsSentence": false
+  },
+  {
+   "surface": "калитку",
+   "utf16Offset": 201,
+   "utf16Length": 7,
+   "ordinal": 35,
+   "startsSentence": false
+  },
+  {
+   "surface": "и",
+   "utf16Offset": 209,
+   "utf16Length": 1,
+   "ordinal": 36,
+   "startsSentence": false
+  },
+  {
+   "surface": "медленно",
+   "utf16Offset": 211,
+   "utf16Length": 8,
+   "ordinal": 37,
+   "startsSentence": false
+  },
+  {
+   "surface": "пошёл",
+   "utf16Offset": 220,
+   "utf16Length": 5,
+   "ordinal": 38,
+   "startsSentence": false
+  },
+  {
+   "surface": "по",
+   "utf16Offset": 226,
+   "utf16Length": 2,
+   "ordinal": 39,
+   "startsSentence": false
+  },
+  {
+   "surface": "тропинке",
+   "utf16Offset": 229,
+   "utf16Length": 8,
+   "ordinal": 40,
+   "startsSentence": false
+  },
+  {
+   "surface": "между",
+   "utf16Offset": 238,
+   "utf16Length": 5,
+   "ordinal": 41,
+   "startsSentence": false
+  },
+  {
+   "surface": "деревьями",
+   "utf16Offset": 244,
+   "utf16Length": 9,
+   "ordinal": 42,
+   "startsSentence": false
+  },
+  {
+   "surface": "Небо",
+   "utf16Offset": 255,
+   "utf16Length": 4,
+   "ordinal": 43,
+   "startsSentence": true
+  },
+  {
+   "surface": "становилось",
+   "utf16Offset": 260,
+   "utf16Length": 11,
+   "ordinal": 44,
+   "startsSentence": false
+  },
+  {
+   "surface": "светлее",
+   "utf16Offset": 272,
+   "utf16Length": 7,
+   "ordinal": 45,
+   "startsSentence": false
+  },
+  {
+   "surface": "где-то",
+   "utf16Offset": 281,
+   "utf16Length": 6,
+   "ordinal": 46,
+   "startsSentence": false
+  },
+  {
+   "surface": "далеко",
+   "utf16Offset": 288,
+   "utf16Length": 6,
+   "ordinal": 47,
+   "startsSentence": false
+  },
+  {
+   "surface": "звонил",
+   "utf16Offset": 295,
+   "utf16Length": 6,
+   "ordinal": 48,
+   "startsSentence": false
+  },
+  {
+   "surface": "колокол",
+   "utf16Offset": 302,
+   "utf16Length": 7,
+   "ordinal": 49,
+   "startsSentence": false
+  },
+  {
+   "surface": "и",
+   "utf16Offset": 311,
+   "utf16Length": 1,
+   "ordinal": 50,
+   "startsSentence": false
+  },
+  {
+   "surface": "день",
+   "utf16Offset": 313,
+   "utf16Length": 4,
+   "ordinal": 51,
+   "startsSentence": false
+  },
+  {
+   "surface": "казался",
+   "utf16Offset": 318,
+   "utf16Length": 7,
+   "ordinal": 52,
+   "startsSentence": false
+  },
+  {
+   "surface": "длинным",
+   "utf16Offset": 326,
+   "utf16Length": 7,
+   "ordinal": 53,
+   "startsSentence": false
+  },
+  {
+   "surface": "и",
+   "utf16Offset": 334,
+   "utf16Length": 1,
+   "ordinal": 54,
+   "startsSentence": false
+  },
+  {
+   "surface": "спокойным",
+   "utf16Offset": 336,
+   "utf16Length": 9,
+   "ordinal": 55,
+   "startsSentence": false
+  },
+  {
+   "surface": "У",
+   "utf16Offset": 347,
+   "utf16Length": 1,
+   "ordinal": 56,
+   "startsSentence": true
+  },
+  {
+   "surface": "калитки",
+   "utf16Offset": 349,
+   "utf16Length": 7,
+   "ordinal": 57,
+   "startsSentence": false
+  },
+  {
+   "surface": "меня",
+   "utf16Offset": 357,
+   "utf16Length": 4,
+   "ordinal": 58,
+   "startsSentence": false
+  },
+  {
+   "surface": "ждал",
+   "utf16Offset": 362,
+   "utf16Length": 4,
+   "ordinal": 59,
+   "startsSentence": false
+  },
+  {
+   "surface": "Пётр",
+   "utf16Offset": 367,
+   "utf16Length": 4,
+   "ordinal": 60,
+   "startsSentence": false
+  }
+ ],
+ "order": [
+  1,
+  31,
+  53,
+  33,
+  34,
+  29,
+  7,
+  9,
+  43,
+  23,
+  59,
+  5,
+  55,
+  32,
+  38,
+  48,
+  25,
+  51,
+  22,
+  57,
+  12,
+  42,
+  3,
+  47,
+  11,
+  37,
+  14,
+  27,
+  45,
+  16,
+  21,
+  40,
+  18,
+  49,
+  35,
+  20,
+  19,
+  36,
+  2,
+  4,
+  54,
+  28,
+  26,
+  13,
+  52,
+  10,
+  15,
+  56,
+  8,
+  44,
+  39,
+  41,
+  58,
+  24,
+  30,
+  6,
+  50
+ ],
+ "plans": {
+  "0": [],
+  "1": [
+   1
+  ],
+  "5": [
+   1,
+   31,
+   53
+  ],
+  "10": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29
+  ],
+  "12": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7
+  ],
+  "25": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38
+  ],
+  "40": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47
+  ],
+  "55": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47,
+   11,
+   37,
+   14,
+   27,
+   45,
+   16,
+   21,
+   40,
+   18,
+   49
+  ],
+  "60": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47,
+   11,
+   37,
+   14,
+   27,
+   45,
+   16,
+   21,
+   40,
+   18,
+   49,
+   35,
+   20,
+   19
+  ],
+  "75": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47,
+   11,
+   37,
+   14,
+   27,
+   45,
+   16,
+   21,
+   40,
+   18,
+   49,
+   35,
+   20,
+   19,
+   36,
+   2,
+   4,
+   54,
+   28,
+   26,
+   13,
+   52,
+   10
+  ],
+  "90": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47,
+   11,
+   37,
+   14,
+   27,
+   45,
+   16,
+   21,
+   40,
+   18,
+   49,
+   35,
+   20,
+   19,
+   36,
+   2,
+   4,
+   54,
+   28,
+   26,
+   13,
+   52,
+   10,
+   15,
+   56,
+   8,
+   44,
+   39,
+   41,
+   58,
+   24,
+   30
+  ],
+  "100": [
+   1,
+   31,
+   53,
+   33,
+   34,
+   29,
+   7,
+   9,
+   43,
+   23,
+   59,
+   5,
+   55,
+   32,
+   38,
+   48,
+   25,
+   51,
+   22,
+   57,
+   12,
+   42,
+   3,
+   47,
+   11,
+   37,
+   14,
+   27,
+   45,
+   16,
+   21,
+   40,
+   18,
+   49,
+   35,
+   20,
+   19,
+   36,
+   2,
+   4,
+   54,
+   28,
+   26,
+   13,
+   52,
+   10,
+   15,
+   56,
+   8,
+   44,
+   39,
+   41,
+   58,
+   24,
+   30,
+   6,
+   50
+  ]
+ }
+}

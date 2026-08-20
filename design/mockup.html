@@ -1,0 +1,1083 @@
+<title>Читалка — дизайн и техническая проверка</title>
+<style>
+  /* ─────────── tokens ─────────── */
+  :root{
+    --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#E1E7EE; --sunken:#F5F7F9;
+    --ink:#0F2137; --ink-2:#33475E; --muted:#61748A; --line:#CBD6E1;
+    --accent:#A85E05; --accent-soft:#F3E2C4;
+    --teal:#0B6E63; --rose:#A63052;
+    --ok:#2C6E49; --warn:#8A5A00; --risk:#9B2C2C;
+    --shadow:0 1px 2px rgba(15,33,55,.06), 0 12px 32px -18px rgba(15,33,55,.35);
+
+    /* app palette — fixed, this is the product's own skin */
+    --app-bg:#0C1A2B; --app-surface:#132840; --app-line:#1E3A58;
+    --app-ink:#E7EEF6; --app-muted:#8AA2BC; --app-hl:#F2A93B;
+
+    --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",Roboto,sans-serif;
+    --font-mono:ui-monospace,"Cascadia Mono","SF Mono",Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#08121F; --surface:#0F2035; --surface-2:#16293F; --sunken:#0B1A2B;
+      --ink:#E7EEF6; --ink-2:#C2D2E3; --muted:#8CA2BA; --line:#20374F;
+      --accent:#F2A93B; --accent-soft:#3A2B10;
+      --teal:#4FC3B0; --rose:#EE7A99;
+      --ok:#6FCF97; --warn:#E5B65C; --risk:#F08A8A;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -22px rgba(0,0,0,.8);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#08121F; --surface:#0F2035; --surface-2:#16293F; --sunken:#0B1A2B;
+    --ink:#E7EEF6; --ink-2:#C2D2E3; --muted:#8CA2BA; --line:#20374F;
+    --accent:#F2A93B; --accent-soft:#3A2B10;
+    --teal:#4FC3B0; --rose:#EE7A99;
+    --ok:#6FCF97; --warn:#E5B65C; --risk:#F08A8A;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 18px 40px -22px rgba(0,0,0,.8);
+  }
+  :root[data-theme="light"]{
+    --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#E1E7EE; --sunken:#F5F7F9;
+    --ink:#0F2137; --ink-2:#33475E; --muted:#61748A; --line:#CBD6E1;
+    --accent:#A85E05; --accent-soft:#F3E2C4;
+    --teal:#0B6E63; --rose:#A63052;
+    --ok:#2C6E49; --warn:#8A5A00; --risk:#9B2C2C;
+    --shadow:0 1px 2px rgba(15,33,55,.06), 0 12px 32px -18px rgba(15,33,55,.35);
+  }
+
+  /* ─────────── base ─────────── */
+  body{background:var(--bg); color:var(--ink); font-family:var(--font-ui);
+       font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 24px 96px;}
+  section{padding:56px 0 0;}
+  h1,h2,h3{text-wrap:balance; margin:0;}
+  h1{font-family:var(--font-display); font-size:clamp(34px,5.2vw,58px); line-height:1.04;
+     letter-spacing:-.015em; font-weight:600;}
+  h2{font-family:var(--font-display); font-size:clamp(24px,3vw,32px); line-height:1.15;
+     font-weight:600; letter-spacing:-.01em;}
+  h3{font-size:16px; font-weight:650; letter-spacing:-.005em;}
+  p{margin:0;}
+  a{color:var(--accent);}
+  .eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:.16em;
+           text-transform:uppercase; color:var(--muted);}
+  .lede{font-size:19px; line-height:1.55; color:var(--ink-2); max-width:62ch;}
+  .note{font-size:14px; color:var(--muted); max-width:70ch;}
+  .stack{display:flex; flex-direction:column; gap:14px;}
+  .stack-lg{display:flex; flex-direction:column; gap:28px;}
+  .rule{height:1px; background:var(--line); border:0; margin:0;}
+
+  /* ─────────── header ─────────── */
+  header.top{padding:64px 0 8px; display:flex; flex-direction:column; gap:20px;}
+  .titleline{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;}
+  .titleline .ru{font-family:var(--font-display);}
+  .titleline .en{font-family:var(--font-display); color:var(--accent); font-style:italic;}
+  .meta{display:flex; gap:10px; flex-wrap:wrap; font-family:var(--font-mono);
+        font-size:11px; letter-spacing:.08em; text-transform:uppercase;}
+  .meta span{border:1px solid var(--line); border-radius:999px; padding:4px 11px; color:var(--muted);}
+
+  /* ─────────── live demo ─────────── */
+  .demo{margin-top:34px; background:var(--app-bg); border-radius:22px; overflow:hidden;
+        box-shadow:var(--shadow); border:1px solid var(--app-line);}
+  .demo-grid{display:grid; grid-template-columns:1fr 268px;}
+  @media (max-width:820px){ .demo-grid{grid-template-columns:1fr;} }
+  .demo-read{padding:34px 34px 30px; min-height:340px;}
+  .demo-side{border-left:1px solid var(--app-line); padding:26px 24px;
+             display:flex; flex-direction:column; align-items:center; gap:18px;}
+  @media (max-width:820px){ .demo-side{border-left:0; border-top:1px solid var(--app-line);} }
+  .demo-chrome{display:flex; justify-content:space-between; align-items:center;
+               font-family:var(--font-mono); font-size:10.5px; letter-spacing:.12em;
+               text-transform:uppercase; color:var(--app-muted); margin-bottom:22px;}
+  #para{font-family:var(--font-display); font-size:21px; line-height:1.85; color:var(--app-ink);}
+  .w{cursor:pointer; border-radius:3px; padding:0 1px; transition:color .18s ease, background .18s ease;}
+  .w:hover{background:rgba(255,255,255,.07);}
+  .w.tr{color:var(--app-hl); font-style:italic;}
+  .w.tr.mark-under{color:var(--app-ink); font-style:normal;
+                   box-shadow:inset 0 -2px 0 var(--app-hl);}
+  .w:focus-visible{outline:2px solid var(--app-hl); outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){ .w{transition:none;} }
+
+  .knob-label{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em;
+              text-transform:uppercase; color:var(--app-muted); text-align:center;}
+  .knob{width:150px; height:150px; position:relative; touch-action:none; cursor:grab;}
+  .knob:active{cursor:grabbing;}
+  .knob:focus-visible{outline:2px solid var(--app-hl); outline-offset:6px; border-radius:50%;}
+  .knob svg{display:block; width:100%; height:100%;}
+  .knob-val{position:absolute; inset:0; display:flex; flex-direction:column;
+            align-items:center; justify-content:center; pointer-events:none;}
+  .knob-num{font-family:var(--font-display); font-size:38px; line-height:1;
+            color:var(--app-ink); font-variant-numeric:tabular-nums;}
+  .knob-sub{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em;
+            color:var(--app-muted); margin-top:6px;}
+  .swatches{display:flex; gap:9px;}
+  .sw{width:26px; height:26px; border-radius:50%; border:1px solid var(--app-line);
+      cursor:pointer; padding:0;}
+  .sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--app-bg), 0 0 0 3.5px var(--app-ink);}
+  .seg{display:flex; border:1px solid var(--app-line); border-radius:9px; overflow:hidden; width:100%;}
+  .seg button{flex:1; background:transparent; border:0; color:var(--app-muted);
+              font-family:var(--font-ui); font-size:12px; padding:8px 4px; cursor:pointer;}
+  .seg button[aria-pressed="true"]{background:var(--app-surface); color:var(--app-ink);}
+  .counter{font-family:var(--font-mono); font-size:11px; color:var(--app-muted);
+           letter-spacing:.06em; font-variant-numeric:tabular-nums;}
+
+  /* tap card */
+  .tapcard{margin-top:22px; background:var(--app-surface); border:1px solid var(--app-line);
+           border-radius:14px; padding:14px 16px; display:flex; align-items:center;
+           justify-content:space-between; gap:16px; min-height:64px;}
+  .tapcard .lhs{display:flex; flex-direction:column; gap:3px;}
+  .tap-ru{font-family:var(--font-display); font-size:19px; color:var(--app-ink);}
+  .tap-en{font-family:var(--font-display); font-size:19px; color:var(--app-hl); font-style:italic;}
+  .tap-gram{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em;
+            text-transform:uppercase; color:var(--app-muted);}
+  .tap-hint{font-size:13px; color:var(--app-muted);}
+  .pill-btn{background:transparent; border:1px solid var(--app-line); color:var(--app-ink);
+            border-radius:999px; padding:6px 13px; font-size:12.5px; cursor:pointer;
+            font-family:var(--font-ui); white-space:nowrap;}
+  .pill-btn:hover{border-color:var(--app-hl); color:var(--app-hl);}
+
+  /* ─────────── phones ─────────── */
+  .rail{display:flex; gap:22px; overflow-x:auto; padding:6px 4px 22px; scroll-snap-type:x proximity;}
+  .phone-wrap{scroll-snap-align:start; flex:0 0 auto; width:258px;
+              display:flex; flex-direction:column; gap:10px;}
+  .phone{width:258px; height:540px; border-radius:34px; padding:9px;
+         background:linear-gradient(160deg,#2A3B50,#0D1724); box-shadow:var(--shadow);}
+  .screen{width:100%; height:100%; border-radius:26px; overflow:hidden; position:relative;
+          background:var(--app-bg); color:var(--app-ink); display:flex; flex-direction:column;}
+  .screen.light{background:#FBF9F4; color:#1B2430;}
+  .statusbar{display:flex; justify-content:space-between; padding:10px 16px 4px;
+             font-family:var(--font-mono); font-size:9.5px; letter-spacing:.06em; opacity:.6;}
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:6px 16px 12px;}
+  .nav h4{margin:0; font-family:var(--font-display); font-size:22px; font-weight:600;}
+  .icon-btn{width:30px; height:30px; border-radius:50%; display:grid; place-items:center;
+            background:var(--app-surface); color:var(--app-ink); font-size:17px; line-height:1;}
+  .screen.light .icon-btn{background:#EAE4D8; color:#1B2430;}
+  .caption{font-size:13px; color:var(--muted);}
+  .caption b{color:var(--ink); font-weight:620;}
+
+  /* library grid */
+  .books{display:grid; grid-template-columns:1fr 1fr; gap:13px; padding:0 15px 14px;
+         overflow:hidden;}
+  .book{display:flex; flex-direction:column; gap:6px;}
+  .cover{position:relative; aspect-ratio:3/4.1; border-radius:9px; overflow:hidden;
+         display:flex; align-items:flex-end; padding:8px;}
+  .cover .glyph{position:absolute; right:-6px; top:-16px; font-family:var(--font-display);
+                font-size:74px; opacity:.16; line-height:1;}
+  .cover .ttl{font-family:var(--font-display); font-size:11px; line-height:1.25;
+              position:relative; z-index:1;}
+  .ring{position:absolute; right:6px; bottom:6px; width:34px; height:34px;}
+  .ring text{font-family:var(--font-mono); font-size:9.5px; font-weight:700;}
+  .readbar{height:3px; border-radius:2px; background:var(--app-line); overflow:hidden;}
+  .readbar i{display:block; height:100%; background:var(--app-muted);}
+  .bmeta{display:flex; justify-content:space-between; font-family:var(--font-mono);
+         font-size:8.5px; letter-spacing:.05em; color:var(--app-muted);}
+
+  /* reader screen */
+  .rtext{padding:4px 20px; font-family:var(--font-display); font-size:14.5px; line-height:1.95;}
+  .rtext em{color:var(--app-hl); font-style:italic;}
+  .tabbar{margin-top:auto; display:flex; justify-content:space-around; padding:12px 0 16px;
+          border-top:1px solid var(--app-line); font-size:10px; color:var(--app-muted);}
+  .screen.light .tabbar{border-top-color:#DED6C6; color:#6B7280;}
+
+  /* settings rows */
+  .rows{padding:2px 15px; display:flex; flex-direction:column; gap:9px;}
+  .row{background:rgba(255,255,255,.045); border-radius:11px; padding:10px 12px;
+       display:flex; flex-direction:column; gap:8px;}
+  .screen.light .row{background:#F0EBE0;}
+  .row-top{display:flex; justify-content:space-between; align-items:center; font-size:12px;}
+  .row-top span:last-child{color:var(--app-muted); font-family:var(--font-mono); font-size:10px;}
+  .screen.light .row-top span:last-child{color:#6B7280;}
+  .slider{height:4px; border-radius:3px; position:relative;}
+  .slider i{position:absolute; top:-4px; width:12px; height:12px; border-radius:50%;
+            background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.5);}
+  .chips{display:flex; gap:6px; flex-wrap:wrap;}
+  .chip{font-size:10.5px; padding:4px 9px; border-radius:7px; border:1px solid var(--app-line);
+        color:var(--app-muted);}
+  .chip.on{border-color:var(--app-hl); color:var(--app-hl);}
+  .screen.light .chip{border-color:#D8D0BF; color:#6B7280;}
+  .dots{display:flex; gap:7px;}
+  .dot{width:22px; height:22px; border-radius:50%;}
+  .dot.on{box-shadow:0 0 0 2px var(--app-bg),0 0 0 3.5px var(--app-ink);}
+  .screen.light .dot.on{box-shadow:0 0 0 2px #FBF9F4,0 0 0 3.5px #1B2430;}
+
+  /* paywall */
+  .pay{padding:16px 20px; display:flex; flex-direction:column; gap:14px; height:100%;}
+  .pay-h{font-family:var(--font-display); font-size:25px; line-height:1.15;}
+  .pay-list{display:flex; flex-direction:column; gap:9px; font-size:12.5px; color:var(--app-muted);}
+  .pay-list div{display:flex; gap:9px;}
+  .pay-list b{color:var(--app-hl); font-weight:600;}
+  .cta{margin-top:auto; background:var(--app-hl); color:#12203A; border-radius:13px;
+       text-align:center; padding:13px; font-weight:650; font-size:14px;}
+  .cta-sub{text-align:center; font-size:11px; color:var(--app-muted); padding-bottom:6px;}
+
+  /* vocabulary screen */
+  .vocab{padding:0 15px; display:flex; flex-direction:column; gap:8px;}
+  .vrow{display:flex; align-items:center; justify-content:space-between;
+        padding:9px 11px; border-radius:10px; background:rgba(255,255,255,.045);}
+  .vword{font-family:var(--font-display); font-size:14px;}
+  .vword small{display:block; font-family:var(--font-ui); font-size:10.5px; color:var(--app-muted);}
+  .vbars{display:flex; gap:3px;}
+  .vbars i{width:5px; height:16px; border-radius:2px; background:var(--app-line);}
+  .vbars i.on{background:var(--app-hl);}
+
+  /* ─────────── analysis blocks ─────────── */
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:16px;}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px;
+        padding:20px; display:flex; flex-direction:column; gap:9px;}
+  .card h3{display:flex; align-items:center; gap:9px;}
+  .verdict{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em;
+           text-transform:uppercase; padding:3px 8px; border-radius:5px; white-space:nowrap;}
+  .v-ok{background:color-mix(in srgb, var(--ok) 15%, transparent); color:var(--ok);}
+  .v-warn{background:color-mix(in srgb, var(--warn) 16%, transparent); color:var(--warn);}
+  .v-risk{background:color-mix(in srgb, var(--risk) 14%, transparent); color:var(--risk);}
+  .card p{font-size:14px; color:var(--ink-2); line-height:1.55;}
+
+  .tablewrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface);}
+  table{border-collapse:collapse; width:100%; min-width:600px; font-size:14px;}
+  th,td{text-align:left; padding:11px 16px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+     color:var(--muted); font-weight:500;}
+  tr:last-child td{border-bottom:0;}
+  td.num{font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--muted);}
+
+  .steps{display:flex; flex-direction:column; gap:0; counter-reset:s;}
+  .step{display:grid; grid-template-columns:76px 1fr; gap:20px; padding:18px 0;
+        border-top:1px solid var(--line);}
+  .step:first-child{border-top:0;}
+  .step .wk{font-family:var(--font-mono); font-size:11px; letter-spacing:.08em;
+            color:var(--muted); padding-top:3px;}
+  .step .body{display:flex; flex-direction:column; gap:5px;}
+  .step .body p{font-size:14px; color:var(--ink-2);}
+
+  .flow{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px;}
+  .flow .node{background:var(--sunken); border:1px solid var(--line); border-radius:11px;
+              padding:13px 15px; display:flex; flex-direction:column; gap:5px;}
+  .flow .node .n{font-family:var(--font-mono); font-size:10px; letter-spacing:.1em;
+                 color:var(--accent);}
+  .flow .node p{font-size:13px; color:var(--ink-2); line-height:1.45;}
+
+  ul.tight{margin:0; padding-left:19px; display:flex; flex-direction:column; gap:7px;}
+  ul.tight li{font-size:14.5px; color:var(--ink-2); line-height:1.55;}
+  code{font-family:var(--font-mono); font-size:12.5px; background:var(--surface-2);
+       padding:1.5px 5px; border-radius:4px;}
+  .q{font-family:var(--font-display); font-size:18px; color:var(--ink); font-style:italic;}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <p class="eyebrow">iOS · SwiftUI · офлайн-читалка с постепенным переводом</p>
+  <h1 class="titleline"><span class="ru">Читаю по-русски,</span> <span class="en">думаю по-английски</span></h1>
+  <p class="lede">Книга остаётся книгой. Колесо на обложке решает, какая доля слов в ней
+    станет английской — от одного слова на страницу до всего текста целиком. Мозг достраивает
+    смысл из контекста; если не достроил — палец по слову, и перевод на экране.</p>
+  <div class="meta">
+    <span>RU / UK → EN</span><span>Работает без сети</span>
+    <span>EPUB · FB2 · TXT</span><span>Trial 3 дня → £4.99</span><span>Без рекламы</span>
+  </div>
+</header>
+
+<!-- ══ HERO DEMO ══ -->
+<div class="demo">
+  <div class="demo-grid">
+    <div class="demo-read">
+      <div class="demo-chrome">
+        <span>Глава 2 · стр. 47</span>
+        <span id="chrome-count">0 слов переведено</span>
+      </div>
+      <p id="para"></p>
+      <div class="tapcard" id="tapcard">
+        <div class="lhs">
+          <span class="tap-hint">Нажмите любое слово в тексте — покажу перевод и разбор.</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="demo-side">
+      <p class="knob-label">Доля перевода</p>
+      <div class="knob" id="knob" role="slider" tabindex="0"
+           aria-label="Доля переведённых слов" aria-valuemin="0" aria-valuemax="100" aria-valuenow="12" aria-valuetext="12 процентов">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--app-line)" stroke-width="9"
+                  stroke-linecap="round" stroke-dasharray="235.6 314.2" transform="rotate(135 60 60)"/>
+          <circle id="knob-arc" cx="60" cy="60" r="50" fill="none" stroke="var(--app-hl)" stroke-width="9"
+                  stroke-linecap="round" stroke-dasharray="0 314.2" transform="rotate(135 60 60)"/>
+          <!-- риска на 60%: дальше начинается подстрочник -->
+          <line x1="111.7" y1="38.6" x2="100.6" y2="43.2" stroke="var(--app-bg)" stroke-width="2.5"/>
+          <circle id="knob-dot" cx="60" cy="10" r="6" fill="var(--app-hl)"/>
+        </svg>
+        <div class="knob-val">
+          <span class="knob-num" id="knob-num">12%</span>
+          <span class="knob-sub" id="knob-zone">ЧТЕНИЕ С ОПОРОЙ</span>
+        </div>
+      </div>
+      <p class="counter" id="counter">7 из 60 слов · англ.</p>
+      <p class="knob-label">Цвет акцента</p>
+      <div class="swatches" id="swatches">
+        <button class="sw" data-c="#F2A93B" aria-pressed="true" aria-label="Янтарный" style="background:#F2A93B"></button>
+        <button class="sw" data-c="#4FC3B0" aria-pressed="false" aria-label="Бирюзовый" style="background:#4FC3B0"></button>
+        <button class="sw" data-c="#EE7A99" aria-pressed="false" aria-label="Розовый" style="background:#EE7A99"></button>
+        <button class="sw" data-c="#9FB6D4" aria-pressed="false" aria-label="Приглушённый" style="background:#9FB6D4"></button>
+      </div>
+      <div class="seg" id="markmode">
+        <button data-m="color" aria-pressed="true">Цветом</button>
+        <button data-m="under" aria-pressed="false">Подчёркнуто</button>
+      </div>
+    </aside>
+  </div>
+</div>
+<p class="note" style="margin-top:12px">Это рабочий прототип логики, а не картинка. При увеличении процента
+  уже переведённые слова остаются на месте и добавляются новые — страница не «перетасовывается»
+  на глазах у читателя. Риска на кольце — отметка 60%: до неё шкала растянута для точной настройки,
+  за ней текст превращается в подстрочник. Докрутите до конца и нажмите любой предлог — увидите,
+  почему <code>с кровати</code> это <i>from</i>, а не <i>with</i>.</p>
+
+<!-- ══ SCREENS ══ -->
+<section>
+  <p class="eyebrow">Экраны</p>
+  <h2 style="margin-top:10px">Пять экранов, из которых состоит всё приложение</h2>
+  <p class="note" style="margin-top:12px">Тёмно-синий с тёплым янтарным — основная тема. Экран настроек
+    показан в светлой теме, чтобы было видно обе.</p>
+
+  <div class="rail">
+    <!-- 1. LIBRARY -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="nav"><h4>Моя полка</h4><div class="icon-btn">+</div></div>
+        <div class="books" id="shelf"></div>
+        <div class="tabbar"><span>Полка</span><span>Словарь</span><span>Настройки</span></div>
+      </div></div>
+      <p class="caption"><b>Полка.</b> Шесть книг в сетке. Тонкая полоса — сколько прочитано,
+        кольцо — доля перевода. Кольцо крутится прямо на обложке.</p>
+    </div>
+
+    <!-- 2. READER -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="nav" style="padding-bottom:8px">
+          <div class="icon-btn">‹</div>
+          <span style="font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:var(--app-muted)">ГЛ. 2 · 47 / 312</span>
+          <div class="icon-btn">Aa</div>
+        </div>
+        <p class="rtext">Сегодня <em>morning</em> я встал с <em>bed</em>, чтобы пойти в сад
+          за <em>apples</em>. Воздух был <em>cold</em>, и трава ещё блестела от росы.
+          Соседская <em>dog</em> бежала вдоль забора и лаяла на <em>birds</em>.
+          Я поднял корзину, открыл старую калитку и медленно пошёл по <em>path</em>
+          между деревьями.</p>
+        <div style="margin-top:auto;padding:0 20px 14px">
+          <div class="readbar" style="background:var(--app-line)"><i style="width:15%;background:var(--app-hl)"></i></div>
+          <div class="bmeta" style="margin-top:6px"><span>15% ПЕРЕВОД</span><span>ОСТАЛОСЬ 4 Ч 12 МИН</span></div>
+        </div>
+      </div></div>
+      <p class="caption"><b>Чтение.</b> Ничего лишнего: текст, полоса прогресса, доля перевода.
+        Кольцо вызывается жестом сверху вниз, чтобы менять процент по ходу главы.</p>
+    </div>
+
+    <!-- 3. WORD TAP -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="nav" style="padding-bottom:8px">
+          <div class="icon-btn">‹</div>
+          <span style="font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:var(--app-muted)">ГЛ. 2 · 47 / 312</span>
+          <div class="icon-btn">Aa</div>
+        </div>
+        <p class="rtext" style="opacity:.45">Сегодня <em>morning</em> я встал с
+          <em style="opacity:1;background:rgba(242,169,59,.18);border-radius:3px;padding:0 2px">bed</em>,
+          чтобы пойти в сад за <em>apples</em>. Воздух был <em>cold</em>, и трава ещё
+          блестела от росы.</p>
+        <div style="margin-top:auto;background:var(--app-surface);border-top:1px solid var(--app-line);
+                    border-radius:18px 18px 0 0;padding:18px 20px 22px;display:flex;flex-direction:column;gap:12px">
+          <div style="width:34px;height:4px;border-radius:2px;background:var(--app-line);margin:0 auto"></div>
+          <div>
+            <div style="display:flex;align-items:baseline;gap:10px">
+              <span class="tap-en" style="font-size:24px">bed</span>
+              <span class="tap-gram">сущ. · [bed]</span>
+            </div>
+            <p style="font-family:var(--font-display);font-size:17px;margin-top:3px">кровать, постель</p>
+          </div>
+          <p style="font-size:11.5px;color:var(--app-muted);line-height:1.5">
+            В тексте: <span style="color:var(--app-ink)">«встал с кровати»</span> → форма
+            <i>кровати</i>, род. падеж</p>
+          <div style="display:flex;gap:8px">
+            <span class="pill-btn" style="flex:1;text-align:center">В словарь</span>
+            <span class="pill-btn" style="flex:1;text-align:center">Больше не переводить</span>
+          </div>
+        </div>
+      </div></div>
+      <p class="caption"><b>Тап по слову.</b> Перевод, транскрипция и исходная словоформа
+        из книги — чтобы связь «кровати → bed» осталась в памяти.</p>
+    </div>
+
+    <!-- 4. SETTINGS (light) -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen light">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="nav"><h4>Оформление</h4><div class="icon-btn">✓</div></div>
+        <div class="rows">
+          <div class="row" style="background:#F0EBE0">
+            <div class="row-top"><span>Тема</span><span>СВЕТЛАЯ</span></div>
+            <div class="dots">
+              <div class="dot" style="background:#FBF9F4;border:1px solid #D8D0BF"></div>
+              <div class="dot on" style="background:#F3EBD8;border:1px solid #D8D0BF"></div>
+              <div class="dot" style="background:#0C1A2B"></div>
+              <div class="dot" style="background:#14261C"></div>
+              <div class="dot" style="background:#1C1620"></div>
+            </div>
+          </div>
+          <div class="row" style="background:#F0EBE0">
+            <div class="row-top"><span>Фон</span><span>#F3EBD8</span></div>
+            <div class="slider" style="background:linear-gradient(90deg,#FFFFFF,#F3EBD8,#C9B48C,#3A5673,#0C1A2B)">
+              <i style="left:22%"></i></div>
+          </div>
+          <div class="row" style="background:#F0EBE0">
+            <div class="row-top"><span>Текст</span><span>#2A2118</span></div>
+            <div class="slider" style="background:linear-gradient(90deg,#000000,#2A2118,#6B7280,#C9C4BA,#FFFFFF)">
+              <i style="left:14%"></i></div>
+          </div>
+          <div class="row" style="background:#F0EBE0">
+            <div class="row-top"><span>Цвет перевода</span><span>ЯНТАРЬ</span></div>
+            <div class="dots">
+              <div class="dot on" style="background:#B4720C"></div>
+              <div class="dot" style="background:#0B6E63"></div>
+              <div class="dot" style="background:#A63052"></div>
+              <div class="dot" style="background:#4A5B8C"></div>
+              <div class="dot" style="background:#2A2118"></div>
+            </div>
+          </div>
+          <div class="row" style="background:#F0EBE0">
+            <div class="row-top"><span>Шрифт</span><span>18 PT</span></div>
+            <div class="chips">
+              <span class="chip on" style="border-color:#B4720C;color:#B4720C">Literata</span>
+              <span class="chip">New York</span>
+              <span class="chip">PT Serif</span>
+              <span class="chip">Дислексия</span>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><span>Полка</span><span>Словарь</span><span style="color:#1B2430">Настройки</span></div>
+      </div></div>
+      <p class="caption"><b>Оформление.</b> Пять готовых тем плюс два ползунка — фон и текст —
+        с защитой от нечитаемого сочетания: контраст ниже 4.5:1 приложение не даст выставить.</p>
+    </div>
+
+    <!-- 5. VOCAB / PAYWALL -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="nav"><h4>Словарь</h4><div class="icon-btn">⌕</div></div>
+        <p style="padding:0 16px 12px;font-size:11.5px;color:var(--app-muted);line-height:1.5">
+          214 слова встречено · 38 узнаётся уверенно</p>
+        <div class="vocab">
+          <div class="vrow"><span class="vword">morning<small>утро · 24 раза</small></span>
+            <span class="vbars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></div>
+          <div class="vrow"><span class="vword">fence<small>забор · 9 раз</small></span>
+            <span class="vbars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></div>
+          <div class="vrow"><span class="vword">dew<small>роса · 3 раза</small></span>
+            <span class="vbars"><i class="on"></i><i></i><i></i><i></i><i></i></span></div>
+          <div class="vrow"><span class="vword">basket<small>корзина · 6 раз</small></span>
+            <span class="vbars"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span></div>
+          <div class="vrow"><span class="vword">gate<small>калитка · 11 раз</small></span>
+            <span class="vbars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span></div>
+        </div>
+        <div class="tabbar"><span>Полка</span><span style="color:var(--app-ink)">Словарь</span><span>Настройки</span></div>
+      </div></div>
+      <p class="caption"><b>Словарь.</b> Побочный продукт чтения: сколько раз слово встретилось
+        и как часто вы за ним лезли. Выученные слова можно перестать переводить.</p>
+    </div>
+
+    <!-- 6. PAYWALL -->
+    <div class="phone-wrap">
+      <div class="phone"><div class="screen">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮ 100%</span></div>
+        <div class="pay">
+          <p class="eyebrow" style="color:var(--app-muted)">Три дня закончились</p>
+          <p class="pay-h">Дальше — <span style="color:var(--app-hl);font-style:italic">без ограничений</span>, один раз и навсегда</p>
+          <div class="pay-list">
+            <div><b>∞</b><span>Сколько угодно страниц в день</span></div>
+            <div><b>∞</b><span>Перевод от 1% до 100%</span></div>
+            <div><b>∞</b><span>Все языковые пакеты, включая будущие</span></div>
+            <div><b>∞</b><span>Синхронизация полки через iCloud</span></div>
+          </div>
+          <div style="border:1px solid var(--app-line);border-radius:13px;padding:13px;
+                      display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12.5px;color:var(--app-muted)">Без покупки</span>
+            <span style="font-size:12.5px">10 страниц в день,<br>без рекламы</span>
+          </div>
+          <div class="cta">Купить за £4.99</div>
+          <p class="cta-sub">Разовая покупка · без подписки · Restore Purchases</p>
+        </div>
+      </div></div>
+      <p class="caption"><b>Пейволл.</b> Разовая покупка вместо подписки: за £3 подписка
+        отпугивает, а разовая — импульсная. Восстановление покупки обязательно по правилам Apple.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ALGORITHM ══ -->
+<section>
+  <p class="eyebrow">Механика</p>
+  <h2 style="margin-top:10px">Как из «5%» получаются конкретные слова</h2>
+  <p class="lede" style="margin-top:14px">Наивное «каждое двадцатое слово» ломается сразу: попадёт на
+    предлог, на имя собственное, на слово, которого нет в словаре. Отбор идёт в четыре шага.</p>
+
+  <div class="flow" style="margin-top:26px">
+    <div class="node"><span class="n">ШАГ 1</span><h3>Токенизация</h3>
+      <p>Текст режется на слова. Числа и имена собственные (заглавная буква в середине фразы)
+        исключаются навсегда. Предлоги, союзы и местоимения откладываются в конец очереди.</p></div>
+    <div class="node"><span class="n">ШАГ 2</span><h3>Лемматизация</h3>
+      <p><code>кровати → кровать</code>. Без этого русская и украинская морфология убивает
+        попадание в словарь: у одного существительного 12 форм, у глагола — за 50.</p></div>
+    <div class="node"><span class="n">ШАГ 3</span><h3>Ранжирование</h3>
+      <p>Каждому кандидату — стабильный вес: частотность слова + хеш от позиции.
+        Частые слова переводятся первыми, они и полезнее для запоминания. Служебные —
+        в самом хвосте очереди, до них дело доходит только после ~55%.</p></div>
+    <div class="node"><span class="n">ШАГ 4</span><h3>Срез по проценту</h3>
+      <p>Берутся первые N кандидатов по весу, где N = процент × число всех слов в тексте.
+        Порядок фиксирован, поэтому 10% всегда включают в себя все слова из 5%.</p></div>
+  </div>
+
+  <div class="cards" style="margin-top:22px">
+    <div class="card"><h3>Почему это важно<span class="verdict v-ok">решено</span></h3>
+      <p>Стабильный порядок даёт три вещи бесплатно: перевод не «прыгает» при перелистывании назад,
+        крутилка ощущается как непрерывный регулятор, и одна и та же книга у вас на iPhone и iPad
+        выглядит одинаково без синхронизации данных.</p></div>
+    <div class="card"><h3>Одно слово — один смысл<span class="verdict v-warn">ограничение</span></h3>
+      <p><i>Ключ</i> — это key или spring? Офлайн-словарь без контекста выберет первое значение
+        и иногда ошибётся. Смягчение: переводим только слова, у которых в словаре одно доминирующее
+        значение, остальные пропускаем. Теряем ~15% кандидатов, зато не врём читателю.</p></div>
+    <div class="card"><h3>Грамматика останется русской<span class="verdict v-ok">так задумано</span></h3>
+      <p>«я встал с bed» грамматически ломано — и это нормально: цель не создать английский текст,
+        а вклинить английское слово в знакомый каркас. Вставляем словарную форму, множественное
+        число сохраняем (<code>яблоками → apples</code>).</p></div>
+  </div>
+</section>
+
+<!-- ══ 0–100 CURVE ══ -->
+<section>
+  <p class="eyebrow">Диапазон кольца</p>
+  <h2 style="margin-top:10px">До 100% дойти можно. Качество по дороге меняется трижды</h2>
+  <p class="lede" style="margin-top:14px">Технического потолка нет — потолок смысловой. Ограничивать
+    кольцо не надо, надо честно показать читателю, где он находится.</p>
+
+  <div class="tablewrap" style="margin-top:24px">
+    <table>
+      <thead><tr><th>Диапазон</th><th>Что видит читатель</th><th>Оценка</th></tr></thead>
+      <tbody>
+        <tr><td class="num">0 – 40%</td>
+            <td>«Сегодня <i>morning</i> я встал с <i>bed</i>, чтобы пойти в сад за <i>apples</i>» —
+                русский каркас, английские вставки. Ради этого всё и затевалось.</td>
+            <td><span class="verdict v-ok">рабочая зона</span></td></tr>
+        <tr><td class="num">40 – 70%</td>
+            <td>Половина текста английская, служебные слова начинают переводиться.
+                Читается медленнее, но контекст ещё держит.</td>
+            <td><span class="verdict v-ok">нормально</span></td></tr>
+        <tr><td class="num">70 – 100%</td>
+            <td>«Today morning I got up from bed, in order to go into garden for apples» —
+                подстрочник: слова английские, грамматика русская, артиклей нет.</td>
+            <td><span class="verdict v-warn">костыль</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards" style="margin-top:24px">
+    <div class="card"><h3>Падеж выбирает предлог<span class="verdict v-ok">решаемо</span></h3>
+      <p>Единственное, что по-настоящему ломается на высоких процентах, — служебные слова.
+        <code>с кровати</code> → <i>from</i>, <code>за яблоками</code> → <i>for</i>,
+        <code>лаять на</code> → <i>at</i>, <code>блестеть от</code> → <i>with</i>. Английский
+        предлог зависит от падежа существительного, которым управляет русский. Таблица
+        «предлог × падеж» — примерно 30 × 6 клеток, пишется руками за день и закрывает вопрос.</p></div>
+    <div class="card"><h3>Нелинейное кольцо<span class="verdict v-ok">в макете</span></h3>
+      <p>Отрезок 0–60% растянут на 3/4 оборота: разница между 10% и 15% ощутима, её надо
+        уметь поймать пальцем. Оставшиеся 40% сжаты в последнюю четверть с риской на границе.
+        Дальше подпись в центре меняется с «ЧТЕНИЕ С ОПОРОЙ» на «ПОДСТРОЧНИК».</p></div>
+    <div class="card"><h3>100% не бывает буквальными<span class="verdict v-warn">честность</span></h3>
+      <p>Свободный словарь покрывает 92–96% слов классической прозы. Редкое, диалектное
+        и разговорное останется русским. Поэтому на максимуме показываем не «100%»,
+        а фактическое: «96% — 4 слова нет в словаре». Обещать больше, чем есть, нельзя.</p></div>
+    <div class="card"><h3>Смысл живёт в 5–35%<span class="verdict v-warn">заметка</span></h3>
+      <p>Выше 70% исчезает то, ради чего всё делалось: не остаётся родного контекста,
+        из которого мозг догадывается. Запрещать не надо — но в подсказке при первом
+        заходе за 60% стоит об этом сказать один раз.</p></div>
+  </div>
+</section>
+
+<!-- ══ OFFLINE ══ -->
+<section>
+  <p class="eyebrow">Главный вопрос</p>
+  <h2 style="margin-top:10px">Офлайн — да, полностью. Вот из чего он собирается</h2>
+  <p class="lede" style="margin-top:14px">Ни одна часть приложения не требует сети. Переводим не текст,
+    а отдельные слова — а значит нужен не переводчик, а словарь и морфология, и то и другое помещается
+    в приложение.</p>
+
+  <div class="tablewrap" style="margin-top:24px">
+    <table>
+      <thead><tr><th>Компонент</th><th>Чем делается</th><th>Размер</th><th>Сложность</th></tr></thead>
+      <tbody>
+        <tr><td>Словарь RU→EN</td><td>Выгрузка из Wiktionary, ~120 тыс. лемм, в SQLite + FTS5</td>
+            <td class="num">8–15 МБ</td><td class="num">низкая</td></tr>
+        <tr><td>Словарь UK→EN</td><td>То же, покрытие беднее — ~60 тыс. лемм</td>
+            <td class="num">5–9 МБ</td><td class="num">низкая</td></tr>
+        <tr><td>Морфология RU</td><td>Таблица словоформ OpenCorpora, ~3 млн форм, упакована в FST/trie</td>
+            <td class="num">12–20 МБ</td><td class="num">средняя</td></tr>
+        <tr><td>Морфология UK</td><td>Словари ЛТ «ВЕСУМ», аналогичная упаковка</td>
+            <td class="num">10–16 МБ</td><td class="num">средняя</td></tr>
+        <tr><td>Частотные списки</td><td>Нужны для ранжирования: что переводить первым</td>
+            <td class="num">&lt; 1 МБ</td><td class="num">низкая</td></tr>
+        <tr><td>Парсер EPUB</td><td>ZIPFoundation + XMLParser, оба системные / open-source</td>
+            <td class="num">—</td><td class="num">средняя</td></tr>
+        <tr><td>Парсер FB2 / TXT</td><td>XMLParser; FB2 важен для русскоязычных книг</td>
+            <td class="num">—</td><td class="num">низкая</td></tr>
+        <tr><td>Вёрстка и пагинация</td><td>TextKit 2 — постраничная разбивка, переносы, выделение слов</td>
+            <td class="num">—</td><td class="num"><span style="color:var(--warn)">высокая</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note" style="margin-top:12px">Итого 35–60 МБ данных в бандле. Приемлемо: лимит App Store —
+    4 ГБ, а порог загрузки по сотовой сети — 200 МБ. Украинский словарь можно вынести в докачиваемый
+    пакет, если захочется ужать первую установку.</p>
+
+  <div class="cards" style="margin-top:26px">
+    <div class="card"><h3>Альтернатива: Apple Translation<span class="verdict v-warn">запасной вариант</span></h3>
+      <p>С iOS 17.4 в системе есть офлайн-перевод (<code>TranslationSession</code>) — но пакет языка
+        качает пользователь, качество на одиночных словах без контекста хуже словаря, а управлять
+        выбором значения нельзя. Годится как фолбэк для языков, под которые мы не собрали словарь.</p></div>
+    <div class="card"><h3>Никаких серверов<span class="verdict v-ok">плюс</span></h3>
+      <p>Отсутствие бэкенда — это не только офлайн: нет платы за хостинг, нет обработки персональных
+        данных, проще и с App Store, и с GDPR. Синхронизацию полки, если понадобится, даёт
+        CloudKit бесплатно.</p></div>
+    <div class="card"><h3>Что действительно займёт время<span class="verdict v-risk">риск</span></h3>
+      <p>Не перевод, а пагинация: разбить EPUB на страницы, сохранить позицию чтения при смене
+        шрифта, не «дёргать» текст при пересчёте процента. Это половина всей работы над приложением.</p></div>
+  </div>
+</section>
+
+<!-- ══ LICENSING ══ -->
+<section>
+  <p class="eyebrow">То, обо что спотыкаются</p>
+  <h2 style="margin-top:10px">Лицензии словарей решить нужно до первой строчки кода</h2>
+  <div class="cards" style="margin-top:20px">
+    <div class="card"><h3>Wiktionary / Wikidata<span class="verdict v-ok">можно</span></h3>
+      <p>CC BY-SA: используем свободно, достаточно указать источник на экране «О программе»
+        и сохранить ту же лицензию для производного словаря. Практичный выбор основы.</p></div>
+    <div class="card"><h3>Apertium, Hunspell<span class="verdict v-risk">осторожно</span></h3>
+      <p>Часто GPL. GPL и App Store конфликтуют по условиям распространения — Apple уже снимала
+        приложения из-за этого. Если берём морфологию оттуда, нужна версия под LGPL/BSD или
+        своя пересборка данных.</p></div>
+    <div class="card"><h3>ABBYY, Oxford, Collins<span class="verdict v-risk">платно</span></h3>
+      <p>Коммерческие словари качественнее, но лицензия стоит от тысяч фунтов в год. При цене
+        приложения £3 это не сходится. Начинаем со свободных данных и чистим их вручную.</p></div>
+    <div class="card"><h3>Сами книги<span class="verdict v-ok">чисто</span></h3>
+      <p>Файлы приносит пользователь, мы ничего не раздаём. В демо и скриншотах — только
+        общественное достояние: Булгаков, Шевченко, Українка.</p></div>
+  </div>
+</section>
+
+<!-- ══ MONETISATION ══ -->
+<section>
+  <p class="eyebrow">Деньги</p>
+  <h2 style="margin-top:10px">Три дня, потом £4.99 навсегда. Рекламы нет</h2>
+  <p class="lede" style="margin-top:14px">Реклама убрана из плана: SDK, экран согласия на трекинг,
+    баннер GDPR и минус к оценкам — ради пенсов с пользователя, которого мы и так конвертируем.
+    После триала остаются 10 страниц в день бесплатно, и это единственное ограничение.</p>
+
+  <div class="tablewrap" style="margin-top:24px">
+    <table>
+      <thead><tr><th>Что задумано</th><th>Как делается</th><th>Оговорка</th></tr></thead>
+      <tbody>
+        <tr><td>3 дня полного доступа</td>
+            <td>Дата первого запуска в Keychain — переживает удаление приложения</td>
+            <td>Обходится переводом часов. Как закрывается — блок ниже.</td></tr>
+        <tr><td>Премиум £4.99</td>
+            <td>StoreKit 2, non-consumable. Подпись транзакции проверяется локально ключом Apple — работает офлайн</td>
+            <td>Apple берёт 15% по Small Business Program. На руки ≈ £3.80 минус НДС страны покупателя.</td></tr>
+        <tr><td>10 страниц в день после триала</td>
+            <td>Счётчик в локальном хранилище, сброс в полночь по часовому поясу устройства</td>
+            <td>«Страница» зависит от шрифта — считаем не экраны, а знаки: 1 страница = 1800 символов, иначе крупный шрифт даёт больше «страниц».</td></tr>
+        <tr><td>Восстановление покупки</td>
+            <td>StoreKit 2 <code>AppStore.sync()</code>, отдельная кнопка на пейволле</td>
+            <td>Требует сети — единственное место во всём приложении, где она нужна. Обязательно по правилам Apple.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ TRIAL HARDENING ══ -->
+<section>
+  <p class="eyebrow">Защита триала</p>
+  <h2 style="margin-top:10px">Обойти можно. Вот три слоя, которые делают обход дороже £4.99</h2>
+  <p class="lede" style="margin-top:14px">Герметичного офлайн-триала не существует — это физика,
+    а не недоработка. Цель другая: чтобы возиться было дольше и противнее, чем заплатить.</p>
+
+  <div class="tablewrap" style="margin-top:24px">
+    <table>
+      <thead><tr><th>Способ обхода</th><th>Чем закрывается</th><th>Итог</th></tr></thead>
+      <tbody>
+        <tr><td><b>Удалить и переустановить</b><br><span style="color:var(--muted)">самый массовый</span></td>
+            <td>Дата первого запуска лежит в Keychain, а не в UserDefaults. Элементы Keychain
+                переживают удаление приложения — это штатное поведение iOS.</td>
+            <td><span class="verdict v-ok">закрыто</span></td></tr>
+        <tr><td><b>Отмотать часы назад</b><br><span style="color:var(--muted)">главная офлайн-дыра</span></td>
+            <td>Два независимых слоя. Первый: храним самую позднюю виденную дату; если текущая
+                раньше неё — часы крутили, показываем пейволл без обвинений. Второй: параллельно
+                считаем реальное время чтения монотонным таймером сессии. Триал = 3 дня
+                <b>или</b> 6 часов чтения, что наступит раньше. Секунды отмоткой часов не вернуть.</td>
+            <td><span class="verdict v-ok">закрыто</span></td></tr>
+        <tr><td><b>Сброс устройства, новый телефон</b><br><span style="color:var(--muted)">редкий, трудозатратный</span></td>
+            <td>Запись «триал начат» в CloudKit private database — личное хранилище Apple ID
+                пользователя. Своего сервера не нужно, платить не за что. Есть сеть — облачная
+                метка главнее; нет сети — работаем по локальной и синхронизируемся, когда сеть появится.</td>
+            <td><span class="verdict v-warn">частично</span></td></tr>
+        <tr><td><b>Джейлбрейк, подмена чека</b></td>
+            <td>StoreKit 2 проверяет подпись транзакции ключом Apple. Подделать без джейлбрейка нельзя,
+                с джейлбрейком — не защищается в принципе.</td>
+            <td><span class="verdict v-risk">не защищаем</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="cards" style="margin-top:24px">
+    <div class="card"><h3>Почему этого достаточно<span class="verdict v-ok">главное</span></h3>
+      <p>После триала пользователь не отрезан — он читает 10 страниц в день бесплатно.
+        Ради снятия этого лимита крутить системные часы туда-сюда будет исчезающе мало людей.
+        Щедрый бесплатный режим защищает выручку лучше любой технической защиты.</p></div>
+    <div class="card"><h3>Никаких обвинений<span class="verdict v-ok">важно</span></h3>
+      <p>При срабатывании защиты приложение молча показывает пейволл. Никаких «обнаружено
+        изменение времени» — часы могли перевестись при перелёте или сбросе настроек, а обвинённый
+        честный пользователь ставит одну звезду.</p></div>
+    <div class="card"><h3>Правила Apple<span class="verdict v-ok">проходим</span></h3>
+      <p>Триал с ограничением после — норма (Guideline 3.1.1). Обязательны кнопка Restore Purchases,
+        честное описание лимитов до покупки и работающее приложение без покупки. Всё три пункта в макете есть.</p></div>
+  </div>
+</section>
+
+<!-- ══ OPEN QUESTIONS ══ -->
+<section>
+  <p class="eyebrow">Зафиксировано</p>
+  <h2 style="margin-top:10px">Решения, от которых дальше не отступаем</h2>
+  <p class="note" style="margin-top:12px">Каждое из них меняет код, поэтому они приняты до начала работы,
+    а не по ходу.</p>
+  <div class="stack" style="margin-top:22px">
+    <p class="q">Процент считается от всех слов текста</p>
+    <p class="note">Не от переводимых. «10%» значит «каждое десятое слово страницы» — так, как это
+      выглядит для читателя, а не как удобно алгоритму.</p>
+    <hr class="rule">
+    <p class="q">Кольцо ходит от 0 до 100%, нелинейно</p>
+    <p class="note">Первые 60% занимают три четверти оборота, остальное сжато в последнюю четверть.
+      На границе — риска и смена подписи в центре кольца.</p>
+    <hr class="rule">
+    <p class="q">Рекламы нет ни в каком виде</p>
+    <p class="note">Ни баннеров, ни межстраничных, ни SDK. Как следствие: нет экрана ATT, нет баннера
+      GDPR, нет сторонних трекеров — и в анкете App Store Privacy можно честно поставить «данные не собираются».</p>
+    <hr class="rule">
+    <p class="q">Цена — £4.99, разовая покупка</p>
+    <p class="note">Не подписка: при таком чеке отмены и возвраты съедают разницу, а разовая покупка
+      берётся импульсно.</p>
+    <hr class="rule">
+    <p class="q">Первый релиз — только русский. Украинский вторым</p>
+    <p class="note">Морфология украинского — отдельные 2–3 недели. Архитектуру под сменные языковые
+      пакеты закладываем сразу, чтобы добавление языка было данными, а не кодом.</p>
+    <hr class="rule">
+    <p class="q">PDF не поддерживаем</p>
+    <p class="note">В PDF нет потока текста — есть координаты символов, и подмена слова разрушает
+      вёрстку. EPUB, FB2 и TXT покрывают почти всё, что люди носят с собой.</p>
+    <hr class="rule">
+    <p class="q">Кольцо — перевод, полоса — прочитанное</p>
+    <p class="note">Две шкалы на карточке книги — предел читаемости. Третью не добавляем.</p>
+    <hr class="rule">
+    <p class="q">Слово переводится всегда, пока не выучено</p>
+    <p class="note">После нескольких встреч без обращения к переводу слово уходит в «выученные»
+      и перестаёт переводиться — освобождая свой процент под новое.</p>
+  </div>
+</section>
+
+<!-- ══ ROADMAP ══ -->
+<section>
+  <p class="eyebrow">Порядок работы</p>
+  <h2 style="margin-top:10px">От пустого проекта до App Store</h2>
+  <div class="steps" style="margin-top:18px">
+    <div class="step"><span class="wk">НЕДЕЛЯ 1–2</span><div class="body">
+      <h3>Ядро перевода без интерфейса</h3>
+      <p>Собрать словарь и морфологию в SQLite, написать токенизатор, лемматизатор и отбор по проценту.
+        Проверять на консольных тестах: подать главу, получить размеченный текст. Самая рискованная
+        часть — делаем первой.</p></div></div>
+    <div class="step"><span class="wk">НЕДЕЛЯ 3–4</span><div class="body">
+      <h3>Читалка</h3>
+      <p>Импорт EPUB/FB2 через Files, разбор в модель книги, пагинация на TextKit 2, сохранение позиции,
+        тап по слову. К концу этапа книгу уже можно прочитать целиком.</p></div></div>
+    <div class="step"><span class="wk">НЕДЕЛЯ 5</span><div class="body">
+      <h3>Полка и крутилка</h3>
+      <p>Сетка обложек, генерация обложек для книг без картинки, кольцо процентов с жестом вращения
+        и тактильной отдачей на каждых 5%.</p></div></div>
+    <div class="step"><span class="wk">НЕДЕЛЯ 6</span><div class="body">
+      <h3>Оформление и словарь</h3>
+      <p>Темы, ползунки цвета с проверкой контраста, размер и гарнитура шрифта, экран выученных слов.</p></div></div>
+    <div class="step"><span class="wk">НЕДЕЛЯ 7</span><div class="body">
+      <h3>Деньги и релиз</h3>
+      <p>StoreKit 2, три слоя защиты триала, лимит страниц, локализация RU/EN, скриншоты,
+        описание, TestFlight. Первое ревью Apple закладывать 3–5 дней.</p></div></div>
+  </div>
+  <p class="note" style="margin-top:22px">Оценка для одного разработчика, знающего SwiftUI: 6–8 недель
+    до версии, которую не стыдно выложить. Украинский — во второй релиз.</p>
+  <p class="note" style="margin-top:14px"><b style="color:var(--ink)">Отдельно про сборку:</b>
+    компилировать iOS-приложение можно только на macOS. Исходники пишутся где угодно, но для
+    запуска на устройстве и отправки в App Store нужен Mac — свой, арендованный в облаке
+    (~£20 в месяц) или бесплатный macOS-раннер в GitHub Actions. Это стоит решить до недели 3,
+    когда появится первый экран, который надо увидеть глазами.</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* fn:true — служебное слово, переводится в последнюю очередь
+     rule    — почему именно такой английский предлог (падеж управляет выбором)
+     нет en  — слова нет в словаре, остаётся русским даже на максимуме        */
+  var T = [
+    {w:"Сегодня",en:"Today",lem:"сегодня",pos:"нареч.",ru:"сегодня",fn:true},
+    {w:"утром",en:"morning",lem:"утро",pos:"сущ.",ru:"утро"},
+    {w:"я",en:"I",lem:"я",pos:"мест.",ru:"я",fn:true},
+    {w:"встал",en:"got up",lem:"встать",pos:"глаг.",ru:"встать"},
+    {w:"с",en:"from",lem:"с",pos:"предл.",ru:"с",fn:true,rule:"с + родит. падеж → from (не with)"},
+    {w:"кровати",en:"bed",lem:"кровать",pos:"сущ.",ru:"кровать, постель",a:","},
+    {w:"чтобы",en:"in order to",lem:"чтобы",pos:"союз",ru:"чтобы",fn:true},
+    {w:"пойти",en:"go",lem:"пойти",pos:"глаг.",ru:"идти, пойти"},
+    {w:"в",en:"into",lem:"в",pos:"предл.",ru:"в",fn:true,rule:"в + винит. падеж → into (движение)"},
+    {w:"сад",en:"garden",lem:"сад",pos:"сущ.",ru:"сад"},
+    {w:"за",en:"for",lem:"за",pos:"предл.",ru:"за",fn:true,rule:"за + творит. падеж → for (цель)"},
+    {w:"яблоками",en:"apples",lem:"яблоко",pos:"сущ.",ru:"яблоки",a:"."},
+    {w:"Воздух",en:"air",lem:"воздух",pos:"сущ.",ru:"воздух",s:true},
+    {w:"был",en:"was",lem:"быть",pos:"глаг.",ru:"быть",fn:true},
+    {w:"холодный",en:"cold",lem:"холодный",pos:"прил.",ru:"холодный",a:","},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"трава",en:"grass",lem:"трава",pos:"сущ.",ru:"трава"},
+    {w:"ещё",en:"still",lem:"ещё",pos:"нареч.",ru:"ещё",fn:true},
+    {w:"блестела",en:"glistened",lem:"блестеть",pos:"глаг.",ru:"блестеть"},
+    {w:"от",en:"with",lem:"от",pos:"предл.",ru:"от",fn:true,rule:"блестеть от + родит. → glisten with"},
+    {w:"росы",en:"dew",lem:"роса",pos:"сущ.",ru:"роса",a:"."},
+    {w:"Соседская",en:"neighbour's",lem:"соседский",pos:"прил.",ru:"соседский",s:true},
+    {w:"собака",en:"dog",lem:"собака",pos:"сущ.",ru:"собака"},
+    {w:"бежала",en:"ran",lem:"бежать",pos:"глаг.",ru:"бежать"},
+    {w:"вдоль",en:"along",lem:"вдоль",pos:"предл.",ru:"вдоль",fn:true,rule:"вдоль + родит. → along"},
+    {w:"забора",en:"fence",lem:"забор",pos:"сущ.",ru:"забор"},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"лаяла",en:"barked",lem:"лаять",pos:"глаг.",ru:"лаять"},
+    {w:"на",en:"at",lem:"на",pos:"предл.",ru:"на",fn:true,rule:"лаять на + винит. → bark at (не on)"},
+    {w:"птиц",en:"birds",lem:"птица",pos:"сущ.",ru:"птицы",a:"."},
+    {w:"Я",en:"I",lem:"я",pos:"мест.",ru:"я",fn:true,s:true},
+    {w:"поднял",en:"picked up",lem:"поднять",pos:"глаг.",ru:"поднять"},
+    {w:"корзину",en:"basket",lem:"корзина",pos:"сущ.",ru:"корзина",a:","},
+    {w:"открыл",en:"opened",lem:"открыть",pos:"глаг.",ru:"открыть"},
+    {w:"старую",en:"old",lem:"старый",pos:"прил.",ru:"старый"},
+    {w:"калитку",en:"gate",lem:"калитка",pos:"сущ.",ru:"калитка"},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"медленно",en:"slowly",lem:"медленно",pos:"нареч.",ru:"медленно"},
+    {w:"пошёл",en:"walked",lem:"пойти",pos:"глаг.",ru:"пошёл"},
+    {w:"по",en:"along",lem:"по",pos:"предл.",ru:"по",fn:true,rule:"идти по + дат. → along"},
+    {w:"тропинке",en:"path",lem:"тропинка",pos:"сущ.",ru:"тропинка"},
+    {w:"между",en:"between",lem:"между",pos:"предл.",ru:"между",fn:true,rule:"между + творит. → between"},
+    {w:"деревьями",en:"trees",lem:"дерево",pos:"сущ.",ru:"деревья",a:"."},
+    {w:"Небо",en:"sky",lem:"небо",pos:"сущ.",ru:"небо",s:true},
+    {w:"становилось",en:"was becoming",lem:"становиться",pos:"глаг.",ru:"становиться",fn:true},
+    {w:"светлее",en:"brighter",lem:"светлый",pos:"прил.",ru:"светлее"},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"где-то"},
+    {w:"далеко",en:"far away",lem:"далеко",pos:"нареч.",ru:"далеко"},
+    {w:"звонил",en:"rang",lem:"звонить",pos:"глаг.",ru:"звонить"},
+    {w:"колокол",en:"bell",lem:"колокол",pos:"сущ.",ru:"колокол",a:","},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"день",en:"day",lem:"день",pos:"сущ.",ru:"день"},
+    {w:"казался"},
+    {w:"длинным",en:"long",lem:"длинный",pos:"прил.",ru:"длинный"},
+    {w:"и",en:"and",lem:"и",pos:"союз",ru:"и",fn:true},
+    {w:"спокойным",en:"calm",lem:"спокойный",pos:"прил.",ru:"спокойный",a:"."}
+  ];
+
+  /* Порядок фиксирован раз и навсегда: знаменательные слова по весу (частотность +
+     хеш от позиции), затем служебные. 10% всегда содержат в себе всё, что было в 5%. */
+  function h01(i){ var x = Math.sin(i*12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); }
+  var order = [], missing = 0;
+  T.forEach(function(t,i){
+    if(t.en) order.push({i:i, r:h01(i), fn:!!t.fn});
+    else missing++;
+  });
+  order.sort(function(a,b){ return (a.fn - b.fn) || (a.r - b.r); });
+
+  var para = document.getElementById("para"),
+      knob = document.getElementById("knob"),
+      arc  = document.getElementById("knob-arc"),
+      dot  = document.getElementById("knob-dot"),
+      num  = document.getElementById("knob-num"),
+      zone = document.getElementById("knob-zone"),
+      cnt  = document.getElementById("counter"),
+      chrome = document.getElementById("chrome-count"),
+      card = document.getElementById("tapcard");
+
+  var pct = 12, markMode = "color", nodes = [];
+
+  /* Нелинейная шкала: 0–60% занимают 3/4 оборота (там нужна точность),
+     60–100% сжаты в последнюю четверть — это зона подстрочника. */
+  var BREAK = 60, BREAK_F = 0.75;
+  function pctToFrac(p){
+    return p <= BREAK ? (p/BREAK)*BREAK_F : BREAK_F + ((p-BREAK)/(100-BREAK))*(1-BREAK_F);
+  }
+  function fracToPct(f){
+    return f <= BREAK_F ? (f/BREAK_F)*BREAK : BREAK + ((f-BREAK_F)/(1-BREAK_F))*(100-BREAK);
+  }
+
+  /* build once */
+  T.forEach(function(t,i){
+    var s = document.createElement("span");
+    s.className = "w"; s.tabIndex = 0; s.dataset.i = i;
+    s.setAttribute("role","button");
+    para.appendChild(s);
+    nodes.push(s);
+    para.appendChild(document.createTextNode(t.a ? t.a + " " : " "));
+  });
+
+  function render(){
+    var k = Math.round(pct/100 * T.length);
+    var on = {};
+    for(var j=0;j<k && j<order.length;j++){ on[order[j].i] = true; }
+    var shown = 0;
+    T.forEach(function(t,i){
+      var s = nodes[i], tr = !!on[i];
+      if(tr) shown++;
+      var out = tr ? t.en : t.w;
+      /* заглавная в начале предложения переносится на английское слово */
+      if(tr && /^[А-ЯЁ]/.test(t.w)) out = out.charAt(0).toUpperCase() + out.slice(1);
+      s.textContent = out;
+      s.className = "w" + (tr ? " tr" + (markMode==="under" ? " mark-under" : "") : "");
+      s.setAttribute("aria-label", tr ? t.en + " — " + t.ru : t.w);
+    });
+    num.textContent = pct + "%";
+    cnt.textContent = pct >= 100
+      ? shown + " из " + T.length + " · " + missing + " слова нет в словаре"
+      : shown + " из " + T.length + " слов · англ.";
+    chrome.textContent = shown === 0 ? "перевод выключен"
+      : shown + (shown % 10 === 1 && shown % 100 !== 11 ? " слово" : " слов") + " переведено";
+    zone.textContent = pct <= BREAK ? "ЧТЕНИЕ С ОПОРОЙ" : "ПОДСТРОЧНИК";
+    zone.style.color = pct <= BREAK ? "" : "var(--app-hl)";
+
+    var frac = pctToFrac(pct), len = 235.6 * frac;
+    arc.setAttribute("stroke-dasharray", len.toFixed(1) + " 314.2");
+    var ang = (135 + frac*270) * Math.PI/180;
+    dot.setAttribute("cx", (60 + 50*Math.cos(ang)).toFixed(2));
+    dot.setAttribute("cy", (60 + 50*Math.sin(ang)).toFixed(2));
+    knob.setAttribute("aria-valuenow", pct);
+    knob.setAttribute("aria-valuetext", pct + " процентов, " +
+      (pct <= BREAK ? "чтение с опорой" : "подстрочник"));
+  }
+
+  function setPct(v){ pct = Math.max(0, Math.min(100, Math.round(v))); render(); }
+
+  /* ── rotate ── */
+  var dragging = false;
+  function fromEvent(e){
+    var r = knob.getBoundingClientRect(),
+        dx = e.clientX - (r.left + r.width/2),
+        dy = e.clientY - (r.top + r.height/2),
+        deg = Math.atan2(dy, dx) * 180/Math.PI;   // -180..180, 0 = right
+    deg = (deg - 135 + 360) % 360;                 // 0 at start of sweep
+    if(deg > 285) return;                          // dead zone behind the gap
+    setPct(fracToPct(Math.min(deg, 270) / 270));
+  }
+  knob.addEventListener("pointerdown", function(e){
+    dragging = true; knob.setPointerCapture(e.pointerId); fromEvent(e); e.preventDefault();
+  });
+  knob.addEventListener("pointermove", function(e){ if(dragging) fromEvent(e); });
+  knob.addEventListener("pointerup",   function(){ dragging = false; });
+  knob.addEventListener("pointercancel", function(){ dragging = false; });
+  knob.addEventListener("keydown", function(e){
+    var d = {ArrowRight:1, ArrowUp:1, ArrowLeft:-1, ArrowDown:-1}[e.key];
+    if(d){ setPct(pct + d); e.preventDefault(); }
+    else if(e.key === "Home"){ setPct(0); e.preventDefault(); }
+    else if(e.key === "End"){ setPct(100); e.preventDefault(); }
+  });
+
+  /* ── tap a word ── */
+  function showWord(i){
+    var t = T[i];
+    card.innerHTML = "";
+    var lhs = document.createElement("div"); lhs.className = "lhs";
+    if(!t.en){
+      var p = document.createElement("span"); p.className = "tap-hint";
+      p.textContent = "«" + t.w + "» — нет в словаре, останется русским даже на 100%.";
+      lhs.appendChild(p); card.appendChild(lhs); return;
+    }
+    var line = document.createElement("div");
+    line.style.cssText = "display:flex;align-items:baseline;gap:10px;flex-wrap:wrap";
+    var en = document.createElement("span"); en.className = "tap-en"; en.textContent = t.en;
+    var ru = document.createElement("span"); ru.className = "tap-ru"; ru.textContent = "— " + t.ru;
+    line.appendChild(en); line.appendChild(ru);
+    var g = document.createElement("span"); g.className = "tap-gram";
+    g.textContent = t.rule ? t.pos + " · правило: " + t.rule
+                           : t.pos + " · в тексте: " + t.w.toLowerCase() + " → " + t.lem;
+    lhs.appendChild(line); lhs.appendChild(g);
+    if(t.fn && !t.rule){
+      var f = document.createElement("span"); f.className = "tap-gram";
+      f.style.opacity = ".7";
+      f.textContent = "служебное — переводится последним, после 55%";
+      lhs.appendChild(f);
+    }
+    var b = document.createElement("button"); b.className = "pill-btn"; b.type = "button";
+    b.textContent = "В словарь";
+    b.addEventListener("click", function(){ b.textContent = "Добавлено ✓"; b.disabled = true; });
+    card.appendChild(lhs); card.appendChild(b);
+  }
+  para.addEventListener("click", function(e){
+    var el = e.target.closest(".w"); if(el) showWord(+el.dataset.i);
+  });
+  para.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){
+      var el = e.target.closest(".w");
+      if(el){ showWord(+el.dataset.i); e.preventDefault(); }
+    }
+  });
+
+  /* ── accent + marker style ── */
+  document.getElementById("swatches").addEventListener("click", function(e){
+    var b = e.target.closest(".sw"); if(!b) return;
+    this.querySelectorAll(".sw").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+    document.querySelector(".demo").style.setProperty("--app-hl", b.dataset.c);
+  });
+  document.getElementById("markmode").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b) return;
+    this.querySelectorAll("button").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+    markMode = b.dataset.m; render();
+  });
+
+  render();
+
+  /* ── shelf ── */
+  var BOOKS = [
+    {t:"Мастер и Маргарита", g:"М", read:42, tr:15, c:"#243B55"},
+    {t:"Кобзар",             g:"К", read:8,  tr:5,  c:"#3A2F4A"},
+    {t:"Тіні забутих предків",g:"Т", read:66, tr:25, c:"#1F3D3A"},
+    {t:"Преступление и наказание", g:"П", read:3, tr:10, c:"#4A2B2B"},
+    {t:"Лісова пісня",       g:"Л", read:91, tr:30, c:"#2B3A24"},
+    {t:"Собачье сердце",     g:"С", read:27, tr:20, c:"#3C3320"}
+  ];
+  var shelf = document.getElementById("shelf");
+  BOOKS.forEach(function(b){
+    var C = 2 * Math.PI * 13.5, on = (b.tr/100) * C;
+    var el = document.createElement("div");
+    el.className = "book";
+    el.innerHTML =
+      '<div class="cover" style="background:linear-gradient(150deg,' + b.c + ',#0C1A2B)">' +
+        '<span class="glyph">' + b.g + '</span>' +
+        '<span class="ttl">' + b.t + '</span>' +
+        '<svg class="ring" viewBox="0 0 34 34">' +
+          '<circle cx="17" cy="17" r="15.5" fill="rgba(12,26,43,.78)"/>' +
+          '<circle cx="17" cy="17" r="13.5" fill="none" stroke="rgba(231,238,246,.22)" stroke-width="2.5"/>' +
+          '<circle cx="17" cy="17" r="13.5" fill="none" stroke="#F2A93B" stroke-width="2.5" stroke-linecap="round" ' +
+            'stroke-dasharray="' + on.toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 17 17)"/>' +
+          '<text x="17" y="20.5" text-anchor="middle" fill="#E7EEF6">' + b.tr + '</text>' +
+        '</svg>' +
+      '</div>' +
+      '<div class="readbar"><i style="width:' + b.read + '%"></i></div>' +
+      '<div class="bmeta"><span>' + b.read + '% ПРОЧТ.</span><span>' + b.tr + '% ENG</span></div>';
+    shelf.appendChild(el);
+  });
+})();
+</script>

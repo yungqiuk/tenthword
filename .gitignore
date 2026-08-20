@@ -1,0 +1,26 @@
+# Словарь собирается скриптом и весит десятки мегабайт — в репозиторий не идёт.
+Data/*.sqlite
+Data/cache/
+
+# Xcode
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# SwiftPM
+Core/.build/
+Core/.swiftpm/
+.swiftpm/
+Package.resolved
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Скриншоты для App Store — снимаются заново, но пусть лежат: их просят на подаче.
+# design/screenshots/ намеренно НЕ игнорируется.
