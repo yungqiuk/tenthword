@@ -18,7 +18,7 @@
 Класс доступа — `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`: не уезжает
 в резервную копию, не переносится на новое устройство восстановлением из бэкапа.
 
-Реализация: `App/Chitalka/Services/KeychainStore.swift`.
+Реализация: `App/TenthWord/Services/KeychainStore.swift`.
 
 ### Слой 2. Метка максимума и бюджет секунд — против перевода часов
 
@@ -40,7 +40,7 @@
 Второй механизм важнее первого: даже если пользователь научится обходить метку
 максимума, накопленные секунды не вернуть.
 
-Реализация: `App/Chitalka/Services/TrialGuard.swift`.
+Реализация: `App/TenthWord/Services/TrialGuard.swift`.
 
 ### Слой 3. CloudKit — против сброса устройства
 
@@ -55,7 +55,7 @@ Apple ID пользователя. Своего сервера не нужно, 
 для пользователей с включённым iCloud и когда-нибудь появлявшейся сетью.
 Полностью офлайн-пользователь на новом устройстве получит новый триал. Это принимается.
 
-Реализация: `App/Chitalka/Services/CloudTrialRecord.swift`.
+Реализация: `App/TenthWord/Services/CloudTrialRecord.swift`.
 
 ## Чего не защищаем
 

@@ -5,7 +5,7 @@
 // Запуск:
 //     swift tools/make_icon.swift
 //
-// Кладёт 1024×1024 в App/Chitalka/Assets.xcassets/AppIcon.appiconset/.
+// Кладёт 1024×1024 в App/TenthWord/Assets.xcassets/AppIcon.appiconset/.
 // App Store требует иконку без прозрачности и без скруглений — систему
 // скругляет сама.
 
@@ -78,7 +78,7 @@ draw("I", color: accent, at: CGPoint(x: center.x + 96 * scale, y: center.y))
 guard let image = context.makeImage() else { fatalError("не выходит картинка") }
 
 let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-let folder = root.appendingPathComponent("App/Chitalka/Assets.xcassets/AppIcon.appiconset")
+let folder = root.appendingPathComponent("App/TenthWord/Assets.xcassets/AppIcon.appiconset")
 try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
 let destination = folder.appendingPathComponent("icon-1024.png")

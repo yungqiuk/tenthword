@@ -5,7 +5,7 @@
     {
       "displayPrice" : "4.99",
       "familyShareable" : false,
-      "internalID" : "chitalka-premium",
+      "internalID" : "tenthword-premium",
       "localizations" : [
         {
           "description" : "Снимает ограничение в десять страниц в день. Разовая покупка, не подписка.",
@@ -18,13 +18,13 @@
           "locale" : "en_GB"
         }
       ],
-      "productID" : "com.chitalka.premium",
+      "productID" : "com.tenthword.premium",
       "referenceName" : "Полный доступ",
       "type" : "NonConsumable"
     }
   ],
   "settings" : {
-    "_applicationInternalID" : "chitalka",
+    "_applicationInternalID" : "tenthword",
     "_developerTeamID" : "",
     "_lastSynchronizedDate" : 0
   },

@@ -3,7 +3,7 @@
 ## Слои
 
 ```
-App/Chitalka/          SwiftUI, SwiftData, StoreKit. Знает про Core, Core про него — нет.
+App/TenthWord/          SwiftUI, SwiftData, StoreKit. Знает про Core, Core про него — нет.
       │
 Core/ReaderCore/       Чистая логика перевода. Ни SwiftUI, ни UIKit, ни файловой системы.
                        Собирается и тестируется через `swift test` без Xcode.
@@ -101,5 +101,5 @@ Core/ReaderCore/       Чистая логика перевода. Ни SwiftUI,
 ## Чего в Core намеренно нет
 
 - Пагинации. Это TextKit 2, он есть только на Apple-платформах и требует симулятора.
-- Разбора EPUB. Работа с файлами и ZIP — в `App/Chitalka/Import/`.
+- Разбора EPUB. Работа с файлами и ZIP — в `App/TenthWord/Import/`.
 - Хранилища. SwiftData живёт в приложении.

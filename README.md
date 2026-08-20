@@ -1,4 +1,4 @@
-# Читалка — что делать на Mac
+# Десятое слово — что делать на Mac
 
 Папка перенесена с Windows. Здесь по шагам то, что нельзя было сделать без macOS.
 Каждый шаг проверяемый: в конце написано, что должно получиться.
@@ -90,14 +90,14 @@ brew install xcodegen
 cd App && xcodegen generate
 ```
 
-**Должно получиться:** `App/Chitalka.xcodeproj`. Открывается в Xcode, собирается (⌘B),
+**Должно получиться:** `App/TenthWord.xcodeproj`. Открывается в Xcode, собирается (⌘B),
 запускается в симуляторе. Локальный пакет `Core`, словарь `Data/ru-en.sqlite`
 и зависимость ZIPFoundation уже прописаны в `project.yml` — руками подключать нечего.
 
 Проверить сборку без Xcode:
 
 ```bash
-cd App && xcodebuild -project Chitalka.xcodeproj -scheme Chitalka \
+cd App && xcodebuild -project TenthWord.xcodeproj -scheme TenthWord \
   -destination 'generic/platform=iOS Simulator' build
 ```
 
@@ -107,10 +107,10 @@ cd App && xcodebuild -project Chitalka.xcodeproj -scheme Chitalka \
 ## Шаг 4. Подписать и запустить на устройстве
 
 Signing & Capabilities → Team: ваш аккаунт разработчика.
-Bundle Identifier поменять на свой, например `com.вашеимя.chitalka`.
+Bundle Identifier поменять на свой, например `com.вашеимя.tenthword`.
 
 Для CloudKit (третий слой защиты триала, см. [docs/TRIAL.md](docs/TRIAL.md)):
-+ Capability → iCloud → CloudKit, контейнер `iCloud.com.вашеимя.chitalka`.
++ Capability → iCloud → CloudKit, контейнер `iCloud.com.вашеимя.tenthword`.
 Можно отложить: без него первые два слоя защиты работают.
 
 ---
@@ -136,7 +136,7 @@ README.md              этот файл
 docs/                  решения, архитектура, данные, защита триала, план
 design/mockup.html     утверждённый дизайн; откройте в браузере, кольцо рабочее
 Core/                  Swift Package: вся логика перевода, тестируется без Xcode
-App/Chitalka/          SwiftUI-исходники, ждут Xcode-проекта
+App/TenthWord/          SwiftUI-исходники, ждут Xcode-проекта
 tools/                 Python: сборка словаря, генерация эталона для тестов
 Data/                  собранный словарь; в git не коммитится
 ```

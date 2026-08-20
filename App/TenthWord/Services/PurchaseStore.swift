@@ -12,7 +12,7 @@ import StoreKit
 final class PurchaseStore {
 
     /// Должен совпасть с идентификатором в App Store Connect.
-    static let premiumProductID = "com.chitalka.premium"
+    static let premiumProductID = "com.tenthword.premium"
 
     private(set) var product: Product?
     private(set) var isPurchased = false

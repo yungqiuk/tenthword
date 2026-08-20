@@ -3,9 +3,9 @@
 # Сам .xcodeproj в репозиторий не кладём — это генерируемый XML, который
 # конфликтует при любом слиянии. Источник правды — этот файл.
 
-name: Chitalka
+name: TenthWord
 options:
-  bundleIdPrefix: com.chitalka
+  bundleIdPrefix: com.tenthword
   deploymentTarget:
     iOS: "17.0"
   createIntermediateGroups: true
@@ -22,11 +22,11 @@ packages:
     from: 0.9.0
 
 targets:
-  Chitalka:
+  TenthWord:
     type: application
     platform: iOS
     sources:
-      - path: Chitalka
+      - path: TenthWord
       # Словарь лежит рядом с исходниками, а не внутри них: собирается скриптом
       # и в репозиторий не идёт. В бандл кладётся как ресурс.
       - path: ../Data/ru-en.sqlite
@@ -38,9 +38,9 @@ targets:
       - package: ZIPFoundation
         product: ZIPFoundation
     info:
-      path: Chitalka/Info.plist
+      path: TenthWord/Info.plist
       properties:
-        CFBundleDisplayName: Читалка
+        CFBundleDisplayName: Десятое слово
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         # Экспортное соответствие: своей криптографии нет, HTTPS не в счёт.
@@ -54,7 +54,7 @@ targets:
         LSSupportsOpeningDocumentsInPlace: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
-        # Типы книг, которые приложение открывает. Благодаря этому «Читалка»
+        # Типы книг, которые приложение открывает. Благодаря этому «Десятое слово»
         # появляется в меню «Поделиться» и в «Открыть с помощью».
         CFBundleDocumentTypes:
           - CFBundleTypeName: Книга EPUB
@@ -79,7 +79,7 @@ targets:
               public.mime-type: [application/x-fictionbook+xml]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.chitalka.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.tenthword.app
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.9"
@@ -95,14 +95,14 @@ targets:
         CODE_SIGNING_ALLOWED: NO
 
 schemes:
-  Chitalka:
+  TenthWord:
     build:
       targets:
-        Chitalka: all
+        TenthWord: all
     run:
       # Покупку можно щёлкать в симуляторе без App Store Connect:
       # StoreKit подставляет товар из этого файла.
-      storeKitConfiguration: Chitalka.storekit
+      storeKitConfiguration: TenthWord.storekit
       config: Debug
     test:
       config: Debug

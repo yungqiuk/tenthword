@@ -215,7 +215,7 @@ struct SettingsView: View {
 /// Privacy Policy URL и Support URL — они обязаны открываться,
 /// иначе сборку завернут на ревью.
 enum AppLinks {
-    static let site = "https://example.github.io/chitalka/"
+    static let site = "https://example.github.io/tenthword/"
     static let privacy = site + "privacy.html"
     static let support = site + "support.html"
     static let terms = site + "terms.html"

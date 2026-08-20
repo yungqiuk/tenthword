@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct ChitalkaApp: App {
+struct TenthWordApp: App {
 
     @State private var theme = Theme()
     @State private var trial = TrialGuard()

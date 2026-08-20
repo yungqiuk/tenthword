@@ -12,7 +12,7 @@ import Security
 /// иначе бэкап стал бы способом сбросить триал.
 enum KeychainStore {
 
-    private static let service = "com.chitalka.trial"
+    private static let service = "com.tenthword.trial"
 
     static func string(for key: String) -> String? {
         var query = baseQuery(key)

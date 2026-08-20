@@ -10,7 +10,7 @@ struct RenderedBook {
 
     /// Номер слова в плане перевода. Висит на подставленных английских словах,
     /// по нему тап находит карточку.
-    static let ordinalKey = NSAttributedString.Key("chitalka.ordinal")
+    static let ordinalKey = NSAttributedString.Key("tenthword.ordinal")
 
     let attributed: NSAttributedString
 
