@@ -3,6 +3,9 @@ Data/*.sqlite
 Data/cache/
 
 # Xcode
+# Проект генерируется из App/project.yml — в репозиторий не идёт,
+# иначе каждый xcodegen generate даёт конфликт на ровном месте.
+*.xcodeproj/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
 DerivedData/
