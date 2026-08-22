@@ -67,7 +67,9 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Button("Купить за \(store.displayPrice)") { showsPaywall = true }
+                Button(store.displayPrice.map { "Купить за \($0)" } ?? "Купить полный доступ") {
+                    showsPaywall = true
+                }
             case .free(let pagesLeft):
                 VStack(alignment: .leading, spacing: 3) {
                     Text("Бесплатный режим")
@@ -75,7 +77,9 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Button("Снять ограничение за \(store.displayPrice)") { showsPaywall = true }
+                Button(store.displayPrice.map { "Снять ограничение за \($0)" } ?? "Снять ограничение") {
+                    showsPaywall = true
+                }
             }
         }
     }

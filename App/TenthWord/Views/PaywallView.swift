@@ -114,15 +114,24 @@ struct PaywallView: View {
             .strokeBorder(theme.text.opacity(0.15)))
     }
 
+    /// Без цены кнопка не покупает, а повторяет загрузку: цену показывает
+    /// App Store, и пока он не ответил, называть сумму нечестно.
     private var buyButton: some View {
         Button {
-            Task { await store.purchase(); sync() }
+            Task {
+                guard store.displayPrice != nil else { await store.load(); return }
+                await store.purchase()
+                sync()
+            }
         } label: {
             Group {
-                if store.isWorking {
+                if store.isWorking || store.isLoadingProduct {
                     ProgressView().tint(theme.background)
+                } else if let price = store.displayPrice {
+                    Text("Купить за \(price)")
+                        .font(.headline)
                 } else {
-                    Text("Купить за \(store.displayPrice)")
+                    Text("Узнать цену")
                         .font(.headline)
                 }
             }
@@ -131,7 +140,7 @@ struct PaywallView: View {
         }
         .background(theme.accent, in: RoundedRectangle(cornerRadius: 13))
         .foregroundStyle(theme.background)
-        .disabled(store.isWorking)
+        .disabled(store.isWorking || store.isLoadingProduct)
     }
 
     private func sync() {

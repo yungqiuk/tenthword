@@ -17,13 +17,19 @@ final class PurchaseStore {
     private(set) var product: Product?
     private(set) var isPurchased = false
     private(set) var isWorking = false
+    private(set) var isLoadingProduct = false
     private(set) var lastError: String?
 
     private var updatesTask: Task<Void, Never>?
 
-    /// Цена так, как её показывает App Store в валюте пользователя.
-    /// Хардкодить «£4.99» нельзя: в других странах цена другая.
-    var displayPrice: String { product?.displayPrice ?? "£4.99" }
+    /// Цена так, как её показывает App Store в валюте и формате пользователя.
+    ///
+    /// Запасного значения здесь нет намеренно. Цену назначает App Store Connect:
+    /// в каждой стране она своя, Apple меняет её вслед за курсом, а в России
+    /// покупки вообще недоступны. Показать «£4.99» тому, у кого спишется 990 ₽
+    /// или ¥800, — это и обман, и отказ на ревью. Пока товар не загружен, цены
+    /// нет, и интерфейс обязан обойтись без неё.
+    var displayPrice: String? { product?.displayPrice }
 
     init() {
         // Транзакции приходят и вне покупки: Ask to Buy, возврат, покупка
@@ -41,12 +47,21 @@ final class PurchaseStore {
 
     deinit { updatesTask?.cancel() }
 
+    /// Загружает товар. Вызывается на старте и повторно на пейволле:
+    /// первый вызов мог прийтись на самолётный режим.
     @MainActor
     func load() async {
-        do {
-            product = try await Product.products(for: [Self.premiumProductID]).first
-        } catch {
-            lastError = "Не удалось загрузить цену. Проверьте соединение."
+        if product == nil {
+            isLoadingProduct = true
+            defer { isLoadingProduct = false }
+            do {
+                product = try await Product.products(for: [Self.premiumProductID]).first
+                lastError = product == nil
+                    ? "Товар недоступен в вашем регионе или ещё не одобрен."
+                    : nil
+            } catch {
+                lastError = "Не удалось загрузить цену. Проверьте соединение."
+            }
         }
         await refresh()
     }
