@@ -79,8 +79,14 @@ Bundle ID `com.tenthword.app` зарегистрирован в аккаунте
 из раздела 4 ниже. Там же, на этой странице:
 
 - **Category**: Primary — Books, Secondary — Education;
+- **Copyright**: `2026 Yuri Koteniatkin` — обязательное поле, знак © Apple
+  подставляет сама. Это не ссылка: год и владелец прав;
 - **Content Rights**: приложение не содержит стороннего контента;
-- **Age Rating → Edit**: на все вопросы анкеты «None» / «No», получится **4+**.
+- **Age Rating → Edit**: на все вопросы анкеты «None» / «No», получится **4+**;
+- **License Agreement**: не трогать. По умолчанию действует стандартный
+  договор Apple, он подходит. `docs/terms.html` его не заменяет и не должен:
+  собственный EULA вписывается туда текстом, а не ссылкой, и нужен только
+  при особых условиях.
 
 #### 3.3. Цена приложения
 
@@ -149,7 +155,9 @@ com.tenthword.premium → Review Information → Screenshot**.
   отдельный скриншот, см. шаг 3.5.1;
 - **Description**, **Keywords**, **Promotional Text** — из раздела 4;
 - **Support URL**: `https://yungqiuk.github.io/tenthword/support.html`;
-- **Marketing URL**: `https://yungqiuk.github.io/tenthword/`;
+- **Marketing URL**: `https://yungqiuk.github.io/tenthword/` — необязательное
+  поле, но с ним на странице приложения появится ссылка «Сайт разработчика».
+  Обязательных ссылок только две: Privacy Policy URL и Support URL;
 - **Build**: нажать «+» и выбрать загруженную сборку;
 - **In-App Purchases**: добавить `com.tenthword.premium` — это ключевой шаг,
   без него товар останется неодобренным, а покупка в релизе не заработает;
