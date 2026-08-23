@@ -110,6 +110,9 @@ Description «Снимает ограничение в десять страни
 Добавить English (U.K.) — «Full access» и перевод описания.
 
 **Review Information → Screenshot**: приложить `design/покупка-для-ревью.png`.
+Размер 1242×2688 выбран не случайно: поле проверяет картинку по списку
+размеров прошлых поколений, и снимок с 6.9″ (1320×2868) оно отвергает
+с ошибкой «The dimensions of one or more screenshots are wrong».
 
 Тут замкнутый круг, и его надо разорвать сразу. Пока у товара нет скриншота,
 он висит в состоянии **Missing Metadata**, а товар в этом состоянии StoreKit
@@ -192,7 +195,9 @@ their English equivalents so the reader learns vocabulary from context.
 
 HOW TO ADD THE ATTACHED SAMPLE BOOK
 1. Unzip the attachment. It contains one file: "Russian sample book.txt".
-   Save it to the Files app on the device.
+   Save it to the Files app on the device. (Alternatively, download the same
+   file directly: https://yungqiuk.github.io/tenthword/sample-book.txt —
+   in Safari use Share > Save to Files.)
 2. Open the app, tap "+" in the top right corner of the shelf.
 3. Pick the file in the Files browser. The book opens on the shelf.
 4. Tap the book to start reading. The orange words are the English
