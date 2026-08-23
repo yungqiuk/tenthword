@@ -161,9 +161,47 @@ com.tenthword.premium → Review Information → Screenshot**.
 - **Build**: нажать «+» и выбрать загруженную сборку;
 - **In-App Purchases**: добавить `com.tenthword.premium` — это ключевой шаг,
   без него товар останется неодобренным, а покупка в релизе не заработает;
-- **App Review Information**: демо-аккаунт не нужен, в Notes написать,
-  что книги пользователь добавляет сам, и приложить пример файла;
+- **App Review Information**: заполняется своими данными, наружу они
+  не идут — имя, телефон с кодом страны и почта, которую вы читаете каждый
+  день (Apple пишет туда, если ревьюер застрял; молчание сутки = отказ).
+  **Sign-in required: No.** В **Notes** — текст ниже, в **Attachment** —
+  файл `design/Пример книги.txt`;
 - **Version Release**: «Automatically release this version».
+
+#### 3.6.1. Notes для ревьюера
+
+Главный риск отказа — пустая полка. Ревьюер открывает приложение, книг внутри
+нет, добавлять надо самому, и заявка возвращается с формулировкой
+«Guideline 2.1: не удалось найти в приложении контент». Лечится текстом
+в Notes и приложенным файлом. Текст на английском, ревью читает по-английски:
+
+```
+The app is a reader: it does not ship with any books. The user adds their own
+files (EPUB, FB2, TXT), and the app replaces a share of the Russian words with
+their English equivalents so the reader learns vocabulary from context.
+
+HOW TO ADD THE ATTACHED SAMPLE BOOK
+1. Save the attached file "Пример книги.txt" to the Files app on the device.
+2. Open the app, tap "+" in the top right corner of the shelf.
+3. Pick the file in the Files browser. The book opens on the shelf.
+4. Tap the book to start reading. The orange words are the English
+   replacements; tap any of them to see the Russian word it replaced.
+5. The ring in the top right of the reading screen sets the share of
+   replaced words, from 0 to 100%.
+
+The interface is in Russian only: the app is made for native Russian speakers
+who are learning English. Everything works offline; the dictionary is bundled
+inside the app.
+
+NO ACCOUNT IS REQUIRED. The in-app purchase (com.tenthword.premium) removes
+the ten-pages-a-day limit that starts after a three-day trial. It can be found
+in Settings ("Настройки") or on the paywall that appears when the limit is hit.
+```
+
+Файл `design/Пример книги.txt` — оригинальный текст, написанный для этой цели,
+чужих авторских прав в нём нет. 533 слова, около трёх страниц на экране:
+достаточно, чтобы ревьюер увидел и подмену слов, и карточку по тапу,
+и перелистывание.
 
 #### 3.7. Анкета приватности
 
