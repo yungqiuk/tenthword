@@ -231,10 +231,20 @@ in Settings ("Настройки") or on the paywall that appears when the limit
 
 #### 3.7. Анкета приватности
 
-Слева **App Privacy → Get Started**. На первый вопрос ответ
-**«No, we do not collect data from this app»** — и анкета кончается.
-Это правда: ни аналитики, ни трекеров, манифест `PrivacyInfo.xcprivacy`
-говорит то же самое.
+Раздел **App Privacy** живёт в левом меню под именем приложения, выше блока
+с версиями, — не на странице версии. Без него заявка не уходит: «an Admin must
+provide information about the app's privacy practices».
+
+1. **Privacy Policy URL → Edit** — `https://yungqiuk.github.io/tenthword/privacy.html`.
+   Поле именно здесь, а не в метаданных версии.
+2. **Data Collection → Get Started** → **«No, we do not collect data from this
+   app»**. Анкета на этом кончается.
+3. **Нажать Publish.** Тут спотыкаются чаще всего: ответ сохранён, но пока
+   не опубликован, ASC считает раздел незаполненным и повторяет ту же ошибку.
+
+Ответ «не собираем» — правда, а не удобная формулировка: ни аналитики,
+ни трекеров, и то же самое заявлено в `PrivacyInfo.xcprivacy` внутри сборки.
+Расхождение анкеты с манифестом Apple ловит автоматически.
 
 #### 3.8. Отправить
 
