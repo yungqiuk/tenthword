@@ -105,9 +105,17 @@ Features → In-App Purchases):
 | Product ID | `com.tenthword.premium` — **обязан совпасть** с `PurchaseStore.premiumProductID` |
 | Price | уровень **£4.99** (GBP 4.99) |
 
-Дальше внутри товара: **Localizations → Russian** — Display Name «Полный доступ»,
-Description «Снимает ограничение в десять страниц в день. Разовая покупка, не подписка.»
-Добавить English (U.K.) — «Full access» и перевод описания.
+Дальше внутри товара — секция **Localizations**, без неё заявка не уходит:
+ASC отвечает «You must add at least one in-app purchase localization».
+Лимиты жёсткие: имя 30 знаков, описание **45**.
+
+| Язык | Display Name | Description |
+|---|---|---|
+| Russian | `Полный доступ` | `Без ограничения в 10 страниц в день` |
+| English (U.K.) | `Full access` | `Removes the ten-pages-a-day limit` |
+
+Display Name покупатель видит в окне подтверждения оплаты Apple — это
+название товара, а не слоган.
 
 **Review Information → Screenshot**: приложить `design/покупка-для-ревью.png`.
 Размер 1242×2688 выбран не случайно: поле проверяет картинку по списку
