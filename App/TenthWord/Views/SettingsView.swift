@@ -213,13 +213,12 @@ struct SettingsView: View {
 
 /// Ссылки на страницы сайта.
 ///
-/// **Перед подачей в App Store** подставьте свой адрес: страницы лежат
-/// в папке `docs/` репозитория и публикуются через GitHub Pages.
+/// Страницы лежат в папке `docs/` репозитория и публикуются через GitHub Pages.
 /// Те же ссылки указываются в App Store Connect в полях
 /// Privacy Policy URL и Support URL — они обязаны открываться,
 /// иначе сборку завернут на ревью.
 enum AppLinks {
-    static let site = "https://example.github.io/tenthword/"
+    static let site = "https://yungqiuk.github.io/tenthword/"
     static let privacy = site + "privacy.html"
     static let support = site + "support.html"
     static let terms = site + "terms.html"

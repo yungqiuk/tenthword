@@ -90,9 +90,15 @@ targets:
         # заявленная поддержка iPad потребовала бы отдельных скриншотов
         # для ревью и вёрстки в две колонки.
         TARGETED_DEVICE_FAMILY: "1"
-        # Подпись включается вместе с вашей учётной записью разработчика,
-        # см. README, шаг 4. Для симулятора она не нужна.
-        CODE_SIGNING_ALLOWED: NO
+        # Подпись автоматическая: Xcode сам берёт сертификат и профиль
+        # команды 78LF5PH522. Для симулятора подпись не требуется —
+        # там подставляется ad-hoc, отдельный флаг не нужен.
+        DEVELOPMENT_TEAM: 78LF5PH522
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: Apple Development
+      configs:
+        Release:
+          CODE_SIGN_IDENTITY: Apple Distribution
 
 schemes:
   TenthWord:
