@@ -304,11 +304,22 @@ English (U.K.). Заводить два приложения не нужно и 
 Start at 5% — one word in twenty. You decide the rest: the ring turns all the way to a hundred. Your own books, fully offline, no ads. Three days free.
 ```
 
-Ключевые слова (`english` и `learn` убраны — они в названии):
+Ключевые слова — намеренно смешанные, 89 из 100:
 
 ```
-russian,reading,books,vocabulary,dictionary,epub,fb2,offline,context,reader,bilingual,immersion
+russian,reading,books,vocabulary,dictionary,epub,fb2,offline,bilingual,читалка,английский
 ```
+
+Кириллица здесь не ошибка. Английская локализация обслуживает не англичан,
+а русских с англоязычным айфоном: такой человек ищет и латиницей, и кириллицей,
+и оба запроса уходят в индекс английской локализации. `english` и `learn`
+убраны — они в названии, повтор Apple не засчитывает. А `английский`
+засчитывается: в названии стоит `Learn English`, кириллического варианта в нём нет.
+
+Остальные поля английской локализации — имя, подзаголовок, описание,
+промотекст — **только по-английски**. Метаданные не на языке локализации
+Apple заворачивает с формулировкой «metadata does not appear to be localized
+appropriately». Ключевых слов это не касается: их не видит никто, кроме поиска.
 
 #### Описание (русское)
 
