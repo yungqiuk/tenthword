@@ -19,35 +19,37 @@
 | Товар для покупки | `App/TenthWord.storekit`, идентификатор `com.tenthword.premium` |
 | Типы документов EPUB/FB2/TXT | `CFBundleDocumentTypes` в `App/project.yml` |
 | Только iPhone | `TARGETED_DEVICE_FAMILY = 1` — iPad заявим позже, вместе с вёрсткой в две колонки |
+| Страницы политики и поддержки опубликованы | <https://yungqiuk.github.io/tenthword/> — GitHub Pages из папки `/docs` |
+| Подписанный архив для загрузки | `build/export/TenthWord.ipa`, `Apple Distribution (78LF5PH522)` |
 
 ## Что нужно сделать руками
 
-### 1. Опубликовать страницы политики
+### 1. Страницы политики — опубликованы
 
-Страницы лежат в `docs/`. На GitHub: **Settings → Pages → Source: Deploy from a branch
-→ ветка `main`, папка `/docs`**. Через минуту они открываются по адресу
-`https://ВАШ-АККАУНТ.github.io/ИМЯ-РЕПОЗИТОРИЯ/`.
+Репозиторий: <https://github.com/yungqiuk/tenthword>, страницы отдаёт GitHub Pages
+из папки `/docs`. Все четыре адреса проверены и отвечают 200:
 
-Затем:
+| Адрес | Куда идёт в App Store Connect |
+|---|---|
+| <https://yungqiuk.github.io/tenthword/> | Marketing URL (необязательно) |
+| <https://yungqiuk.github.io/tenthword/privacy.html> | **Privacy Policy URL** |
+| <https://yungqiuk.github.io/tenthword/support.html> | **Support URL** |
+| <https://yungqiuk.github.io/tenthword/terms.html> | EULA (стандартный EULA Apple подходит) |
 
-- в `docs/support.html` заменить `support@tenthword.com` на реальный почтовый ящик
-  (в двух местах — в русской и английской части);
-- в `App/TenthWord/Views/SettingsView.swift`, в `AppLinks.site`, поставить полученный адрес;
-- пересобрать приложение.
+Почта поддержки — `yungqifr@gmail.com`, указана на странице поддержки
+и должна совпадать с полем Support в App Store Connect.
 
-Apple проверяет, что обе ссылки открываются. Нерабочая ссылка на политику —
-самая частая причина отказа на ревью.
+Те же ссылки зашиты в приложение: `AppLinks` в
+`App/TenthWord/Views/SettingsView.swift`. Меняется адрес — меняется и там.
 
-### 2. Подпись и идентификатор
+### 2. Подпись — настроена
 
-В `App/project.yml`:
+`App/project.yml`: команда `78LF5PH522`, автоматическая подпись.
+`CODE_SIGN_IDENTITY` руками не задаётся — при автоматической подписи
+это конфликт, сборка падает с «conflicting provisioning settings».
 
-- `PRODUCT_BUNDLE_IDENTIFIER` — сменить `com.tenthword.app` на свой,
-  например `com.вашафамилия.tenthword`;
-- убрать `CODE_SIGNING_ALLOWED: NO` (он нужен только для симулятора);
-- добавить `DEVELOPMENT_TEAM: ВАШTEAMID`.
-
-Затем `cd App && xcodegen generate` и в Xcode: Signing & Capabilities → ваша команда.
+Bundle ID `com.tenthword.app` зарегистрирован в аккаунте разработчика
+автоматически, при первом архиве с `-allowProvisioningUpdates`.
 
 ### 3. App Store Connect
 
@@ -163,28 +165,39 @@ not a subscription.
 
 ### 5. Сборка и загрузка
 
-```bash
-cd App && xcodegen generate
-```
-
-Дальше в Xcode: Product → Destination → Any iOS Device → Product → Archive →
-Distribute App → App Store Connect. Или из командной строки:
+Архив и `.ipa` собираются одной парой команд, без Xcode:
 
 ```bash
-xcodebuild -project App/TenthWord.xcodeproj -scheme TenthWord -configuration Release -archivePath build/TenthWord.xcarchive archive
+cd App && xcodegen generate && xcodebuild -project TenthWord.xcodeproj -scheme TenthWord -configuration Release -destination 'generic/platform=iOS' -archivePath ../build/TenthWord.xcarchive -allowProvisioningUpdates archive
 ```
+
+```bash
+xcodebuild -exportArchive -archivePath build/TenthWord.xcarchive -exportOptionsPlist build/ExportOptions.plist -exportPath build/export -allowProvisioningUpdates
+```
+
+Получается `build/export/TenthWord.ipa`, 12 МБ, подписан
+`Apple Distribution: YURI KOTENIATKIN (78LF5PH522)`, `get-task-allow = false`.
+Это готовый к загрузке файл.
+
+Загрузить его можно тремя способами: приложением **Transporter** из Mac App Store
+(перетащить `.ipa`), из Xcode через Organizer, или командой `xcrun altool
+--upload-app`, для которой нужен пароль приложения или ключ App Store Connect API.
+Загрузка сработает только после того, как в App Store Connect создана запись
+приложения с тем же Bundle ID.
 
 ### 6. Перед отправкой на ревью — проверить руками
 
 - [ ] Покупка проходит в песочнице и снимает лимит
 - [ ] «Восстановить покупку» возвращает доступ на чистом устройстве
 - [ ] Обе ссылки (политика, поддержка) открываются с реального устройства
+- [ ] Цена на пейволле — из App Store, а не «Узнать цену»: значит, товар одобрен
 - [ ] Импорт проверен на пяти настоящих книгах: EPUB, FB2, TXT разного происхождения
 - [ ] Триал показывает «осталось N дней» на первом запуске
 - [ ] После триала лимит десять страниц в день действительно срабатывает
 
-Последние два пункта уже проверялись в симуляторе, остальные требуют
-учётной записи разработчика.
+Про триал и лимит страниц проверено в симуляторе. Ссылки отвечают 200,
+но с устройства их стоит открыть глазами. Остальное требует товара,
+заведённого в App Store Connect.
 
 ## Чего в сборке сознательно нет
 
