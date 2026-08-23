@@ -51,17 +51,100 @@
 Bundle ID `com.tenthword.app` зарегистрирован в аккаунте разработчика
 автоматически, при первом архиве с `-allowProvisioningUpdates`.
 
-### 3. App Store Connect
+### 3. App Store Connect — по шагам
 
-Создать приложение (Bundle ID из предыдущего шага) и заполнить:
+Всё делается на <https://appstoreconnect.apple.com> под тем же Apple ID,
+которым подписан сертификат команды `78LF5PH522`. Apple время от времени
+переставляет разделы местами; ориентируйтесь на названия полей, они не меняются.
 
-- **In-App Purchase**: тип Non-Consumable, Product ID **`com.tenthword.premium`**
-  (обязан совпадать с `PurchaseStore.premiumProductID`), цена — уровень £4.99,
-  название «Полный доступ». Товар подаётся на ревью вместе с первой сборкой.
-- **Privacy Policy URL** и **Support URL** — адреса из шага 1.
-- **App Privacy**: «Data Not Collected». Это правда: ни аналитики, ни трекеров.
-- **Age Rating**: 4+. Пользовательского контента и внешних ссылок на него нет.
-- **Category**: Books, вторая — Education.
+#### 3.1. Завести запись приложения
+
+**Apps → синий «+» → New App.** В окне:
+
+| Поле | Что ставить |
+|---|---|
+| Platforms | iOS |
+| Name | `Десятое слово: английский` |
+| Primary Language | Russian |
+| Bundle ID | `com.tenthword.app` — выбрать из списка, он там уже есть |
+| SKU | `TENTHWORD001` — внутренний код, покупателям не виден |
+| User Access | Full Access |
+
+Кнопка **Create**. С этой секунды имя занято за вами.
+
+#### 3.2. Добавить английскую локализацию карточки
+
+Слева **App Information**. Вверху справа выпадающий список языков →
+**Add Language → English (U.K.)**. Заполнить `Name` и `Subtitle`
+из раздела 4 ниже. Там же, на этой странице:
+
+- **Category**: Primary — Books, Secondary — Education;
+- **Content Rights**: приложение не содержит стороннего контента;
+- **Age Rating → Edit**: на все вопросы анкеты «None» / «No», получится **4+**.
+
+#### 3.3. Цена приложения
+
+**Pricing and Availability**: цена приложения — **Free**. Деньги берутся
+покупкой внутри, а не за скачивание. Availability — все страны.
+
+#### 3.4. Завести покупку
+
+Слева **Monetization → In-App Purchases → «+»** (в старом интерфейсе —
+Features → In-App Purchases):
+
+| Поле | Значение |
+|---|---|
+| Type | Non-Consumable |
+| Reference Name | Полный доступ |
+| Product ID | `com.tenthword.premium` — **обязан совпасть** с `PurchaseStore.premiumProductID` |
+| Price | уровень **£4.99** (GBP 4.99) |
+
+Дальше внутри товара: **Localizations → Russian** — Display Name «Полный доступ»,
+Description «Снимает ограничение в десять страниц в день. Разовая покупка, не подписка.»
+Добавить English (U.K.) — «Full access» и перевод описания.
+
+В разделе **Review Information** приложить скриншот пейволла
+(`design/screenshots/` подойдёт) — без него товар заворачивают.
+Статус товара станет «Ready to Submit». Товар подаётся вместе со сборкой.
+
+#### 3.5. Загрузить сборку
+
+Скачать **Transporter** из Mac App Store, войти тем же Apple ID,
+перетащить `build/export/TenthWord.ipa` и нажать **Deliver**.
+Обработка занимает от пятнадцати минут до часа; готовую сборку видно
+в **TestFlight → iOS Builds**.
+
+Если Apple пришлёт письмо про Export Compliance — отвечать не нужно,
+`ITSAppUsesNonExemptEncryption = false` уже в Info.plist.
+
+#### 3.6. Заполнить страницу версии 1.0
+
+Слева **iOS App → 1.0 Prepare for Submission**:
+
+- **Screenshots**: перетащить пять файлов из `design/screenshots/`
+  в слот **6.9" Display**. Остальные размеры Apple достроит сама;
+- **Description**, **Keywords**, **Promotional Text** — из раздела 4;
+- **Support URL**: `https://yungqiuk.github.io/tenthword/support.html`;
+- **Marketing URL**: `https://yungqiuk.github.io/tenthword/`;
+- **Build**: нажать «+» и выбрать загруженную сборку;
+- **In-App Purchases**: добавить `com.tenthword.premium` — это ключевой шаг,
+  без него товар останется неодобренным, а покупка в релизе не заработает;
+- **App Review Information**: демо-аккаунт не нужен, в Notes написать,
+  что книги пользователь добавляет сам, и приложить пример файла;
+- **Version Release**: «Automatically release this version».
+
+#### 3.7. Анкета приватности
+
+Слева **App Privacy → Get Started**. На первый вопрос ответ
+**«No, we do not collect data from this app»** — и анкета кончается.
+Это правда: ни аналитики, ни трекеров, манифест `PrivacyInfo.xcprivacy`
+говорит то же самое.
+
+#### 3.8. Отправить
+
+Кнопка **Add for Review** вверху страницы версии, затем **Submit to App Review**.
+Проверить, что в заявку попали и сборка, и покупка. Первое ревью — 1–3 дня,
+изредка до недели.
 
 ### 4. Названия и тексты для карточки
 
@@ -203,8 +286,10 @@ xcodebuild -exportArchive -archivePath build/TenthWord.xcarchive -exportOptionsP
 
 - **iPad.** Заявлять поддержку — значит показывать вёрстку в две колонки
   и готовить отдельные скриншоты. Отложено, см. `docs/ROADMAP.md`.
-- **Локализация интерфейса на английский.** Интерфейс русский: первая версия
-  для читателей, у которых русский родной. Карточка в App Store при этом
-  двуязычная.
+- **Интерфейса на английском не будет вообще.** Не отложен — не нужен:
+  приложение продаётся тем, кто английский учит, а не тем, кто на нём говорит.
+  Язык интерфейса всегда совпадает с языком книг, см. `docs/ROADMAP.md`.
+  Карточка в App Store при этом двуязычная — так приложение находят те,
+  у кого система переключена на английский.
 - **CloudKit.** Третий слой защиты триала (`docs/TRIAL.md`) требует
   платного аккаунта и контейнера; первые два слоя работают без него.
