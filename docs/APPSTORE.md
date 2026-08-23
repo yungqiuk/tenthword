@@ -328,6 +328,7 @@ If it does not, tap the word to see what it replaced.
 
 Learned a word? Remove it, and the freed percent goes to the next one.
 
+— For native Russian speakers: the books and the interface are in Russian
 — Your own books: EPUB, FB2, TXT
 — Fully offline: the dictionary lives inside the app
 — Word order never reshuffles when you change the percentage
