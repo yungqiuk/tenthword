@@ -49,10 +49,6 @@ struct ReaderView: View {
     @State private var dragOffset: CGFloat = 0
     @State private var screenSpan: CGSize = .zero
 
-    /// Кнопки громкости. Живут, только пока открыт читатель, и только
-    /// если читатель сам их включил в настройках.
-    @State private var volumeKeys = VolumeKeys()
-
     var body: some View {
         ZStack(alignment: .bottom) {
             theme.background.ignoresSafeArea()
@@ -68,13 +64,9 @@ struct ReaderView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbar }
-        .background {
-            if theme.volumeKeysTurnPages { VolumeKeysHost().allowsHitTesting(false) }
-        }
         .task { await load() }
-        .onAppear { trial.beginReadingSession(); syncVolumeKeys() }
-        .onDisappear { trial.endReadingSession(); save(); volumeKeys.stop() }
-        .onChange(of: theme.volumeKeysTurnPages) { syncVolumeKeys() }
+        .onAppear { trial.beginReadingSession() }
+        .onDisappear { trial.endReadingSession(); save() }
         .onChange(of: style) { Task { await rebuildLayout() } }
         .sheet(item: $tapped) { candidate in
             WordCard(candidate: candidate, theme: theme) { action in
@@ -225,14 +217,6 @@ struct ReaderView: View {
                 dragOffset = 0
             }
             rememberPosition()
-        }
-    }
-
-    private func syncVolumeKeys() {
-        if theme.volumeKeysTurnPages {
-            volumeKeys.start { forward in turnPage(forward: forward) }
-        } else {
-            volumeKeys.stop()
         }
     }
 

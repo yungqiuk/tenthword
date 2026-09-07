@@ -102,11 +102,6 @@ final class Theme {
     var marker: Marker { didSet { save() } }
     var pageTurn: PageTurn { didSet { save() } }
 
-    /// Перелистывание кнопками громкости. По умолчанию выключено:
-    /// правило App Store 2.5.9 запрещает менять назначение системных кнопок,
-    /// и включать это за читателя мы не вправе. Подробности — docs/ROADMAP.md.
-    var volumeKeysTurnPages: Bool { didSet { save() } }
-
     var background: Color { Color(hex: backgroundHex) }
     var text: Color { Color(hex: textHex) }
     var accent: Color { Color(hex: accentHex) }
@@ -186,7 +181,6 @@ final class Theme {
         lineSpacing = storedNumber(Keys.spacing, fallback: 8)
         marker = Marker(rawValue: defaults.string(forKey: Keys.marker) ?? "") ?? .color
         pageTurn = PageTurn(rawValue: defaults.string(forKey: Keys.pageTurn) ?? "") ?? .horizontal
-        volumeKeysTurnPages = defaults.bool(forKey: Keys.volumeKeys)
     }
 
     private enum Keys {
@@ -199,7 +193,6 @@ final class Theme {
         static let spacing = "theme.spacing"
         static let marker = "theme.marker"
         static let pageTurn = "reading.pageTurn"
-        static let volumeKeys = "reading.volumeKeys"
     }
 
     private func save() {
@@ -213,7 +206,6 @@ final class Theme {
         defaults.set(lineSpacing, forKey: Keys.spacing)
         defaults.set(marker.rawValue, forKey: Keys.marker)
         defaults.set(pageTurn.rawValue, forKey: Keys.pageTurn)
-        defaults.set(volumeKeysTurnPages, forKey: Keys.volumeKeys)
     }
 }
 
