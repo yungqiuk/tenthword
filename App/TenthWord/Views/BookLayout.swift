@@ -162,6 +162,7 @@ struct ReadingStyle: Equatable {
     let accentColor: UIColor
     let lineSpacing: CGFloat
     let marker: Theme.Marker
+    let textAlign: Theme.TextAlign
 
     var plainAttributes: [NSAttributedString.Key: Any] {
         [.font: font, .foregroundColor: textColor, .paragraphStyle: paragraphStyle]
@@ -187,6 +188,11 @@ struct ReadingStyle: Equatable {
         let style = NSMutableParagraphStyle()
         style.lineSpacing = lineSpacing
         style.paragraphSpacing = lineSpacing
+        style.alignment = textAlign == .justified ? .justified : .natural
+        // Выключка по ширине без переносов рвёт русскую строку белыми
+        // провалами: слова длинные, а колонка узкая. Переносы включаются
+        // вместе с выключкой и только с ней.
+        style.hyphenationFactor = textAlign == .justified ? 1 : 0
         return style
     }
 }

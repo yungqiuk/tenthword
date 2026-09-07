@@ -18,7 +18,7 @@ struct SettingsView: View {
                 accessSection
 
                 Section("Тема") {
-                    themeRow
+                    ThemePresetRow()
                     colorSlider(title: "Фон", value: $theme.backgroundHex,
                                 gradient: [0xFFFFFF, 0xF3EBD8, 0xC9B48C, 0x3A5673, 0x0C1A2B])
                     colorSlider(title: "Текст", value: $theme.textHex,
@@ -43,8 +43,13 @@ struct SettingsView: View {
                     Picker("Гарнитура", selection: $theme.fontID) {
                         ForEach(Theme.FontChoice.all) { Text($0.name).tag($0.id) }
                     }
-                    stepper("Размер", value: $theme.fontSize, range: 12...30, step: 1, unit: "pt")
-                    stepper("Межстрочный", value: $theme.lineSpacing, range: 0...20, step: 1, unit: "pt")
+                    ValueStepper(title: "Размер", value: $theme.fontSize,
+                                 range: 12...30, step: 1, unit: "pt")
+                    ValueStepper(title: "Межстрочный", value: $theme.lineSpacing,
+                                 range: 0...20, step: 1, unit: "pt")
+                    Picker("Выключка", selection: $theme.textAlign) {
+                        ForEach(Theme.TextAlign.allCases) { Text($0.label).tag($0) }
+                    }
                     sample
                 }
 
@@ -91,25 +96,6 @@ struct SettingsView: View {
     }
 
     // MARK: - Оформление
-
-    private var themeRow: some View {
-        HStack(spacing: 10) {
-            ForEach(Theme.Preset.all) { preset in
-                Circle()
-                    .fill(preset.background)
-                    .overlay(Circle().strokeBorder(preset.text.opacity(0.35), lineWidth: 1))
-                    .overlay {
-                        if theme.presetID == preset.id {
-                            Circle().strokeBorder(preset.accent, lineWidth: 2.5).padding(-3)
-                        }
-                    }
-                    .frame(width: 30, height: 30)
-                    .onTapGesture { theme.apply(preset) }
-                    .accessibilityLabel(preset.name)
-            }
-        }
-        .padding(.vertical, 4)
-    }
 
     private var accentRow: some View {
         HStack(spacing: 10) {
@@ -159,19 +145,6 @@ struct SettingsView: View {
             }
             .font(.caption)
             .foregroundStyle(.orange)
-        }
-    }
-
-    private func stepper(_ title: String, value: Binding<Double>,
-                         range: ClosedRange<Double>, step: Double, unit: String) -> some View {
-        Stepper(value: value, in: range, step: step) {
-            HStack {
-                Text(title)
-                Spacer()
-                Text("\(Int(value.wrappedValue)) \(unit)")
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-            }
         }
     }
 

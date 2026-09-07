@@ -40,6 +40,7 @@ struct ReaderView: View {
     @State private var isPaginating = false
     @State private var tapped: Candidate?
     @State private var showsRing = false
+    @State private var showsAppearance = false
     @State private var showsPaywall = false
     @State private var glossZoneWarningShown = false
 
@@ -75,6 +76,7 @@ struct ReaderView: View {
             .presentationDetents([.height(240)])
         }
         .sheet(isPresented: $showsPaywall) { PaywallView() }
+        .sheet(isPresented: $showsAppearance) { ReadingAppearanceSheet() }
         .alert("Дальше — подстрочник", isPresented: $glossZoneWarningShown) {
             Button("Понятно") {}
         } message: {
@@ -107,6 +109,9 @@ struct ReaderView: View {
                     .offset(shift(ofPage: index))
                 }
             }
+            // Без подрезки соседняя страница просвечивает сквозь верхнюю
+            // панель: она стоит ровно на экран выше, а панель полупрозрачна.
+            .clipped()
             .contentShape(Rectangle())
             .gesture(turnGesture)
             .task(id: geometry.size) { screenSpan = geometry.size }
@@ -138,7 +143,8 @@ struct ReaderView: View {
                      textColor: UIColor(theme.text),
                      accentColor: UIColor(theme.accent),
                      lineSpacing: theme.lineSpacing,
-                     marker: theme.marker)
+                     marker: theme.marker,
+                     textAlign: theme.textAlign)
     }
 
     // MARK: - Перелистывание
@@ -289,6 +295,16 @@ struct ReaderView: View {
             }
             .accessibilityLabel("Доля перевода")
         }
+        // Шрифт и тему крутят по ходу чтения, а нижняя панель вкладок
+        // здесь спрятана — без этой кнопки пришлось бы выходить из книги.
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                showsAppearance = true
+            } label: {
+                Image(systemName: "textformat.size")
+            }
+            .accessibilityLabel("Оформление")
+        }
     }
 
     // MARK: - Загрузка и пересчёт
@@ -309,9 +325,13 @@ struct ReaderView: View {
 
         // Разбор книги — почти секунда на романе.
         // На главном потоке ему делать нечего.
+        let started = Date()
         let result = await Task.detached(priority: .userInitiated) {
             engine.prepare(text)
         }.value
+        #if DEBUG
+        print("⏱ разбор \(text.count) знаков: \(Int(Date().timeIntervalSince(started) * 1000)) мс")
+        #endif
 
         source = text
         prepared = result
@@ -342,11 +362,19 @@ struct ReaderView: View {
         let offset = book.readingOffset
 
         let (renderedBook, starts, index) = await Task.detached(priority: .userInitiated) {
+            let renderStarted = Date()
             let rendered = BookLayout.render(source: text,
                                              prepared: prepared,
                                              plan: plan,
                                              style: currentStyle)
+            #if DEBUG
+            print("⏱ сборка текста: \(Int(Date().timeIntervalSince(renderStarted) * 1000)) мс")
+            let paginateStarted = Date()
+            #endif
             let starts = BookLayout.pageStarts(for: rendered.attributed, size: size)
+            #if DEBUG
+            print("⏱ разбивка на \(starts.count) страниц: \(Int(Date().timeIntervalSince(paginateStarted) * 1000)) мс")
+            #endif
             // Возвращаем читателя на то же место книги, а не на тот же номер страницы.
             let target = rendered.renderedOffset(forSource: offset)
             let index = starts.lastIndex { $0 <= target } ?? 0

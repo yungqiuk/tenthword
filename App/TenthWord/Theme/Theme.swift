@@ -70,6 +70,21 @@ final class Theme {
         }
     }
 
+    // MARK: - Выключка строк
+
+    enum TextAlign: String, CaseIterable, Identifiable {
+        case ragged      // по левому краю, правый рваный
+        case justified   // по ширине, как в бумажной книге
+
+        var id: String { rawValue }
+        var label: String {
+            switch self {
+            case .ragged: return "По левому краю"
+            case .justified: return "По ширине"
+            }
+        }
+    }
+
     // MARK: - Шрифты
     //
     // Системные и те, что есть на устройстве без докачки. Свои гарнитуры добавятся
@@ -101,6 +116,7 @@ final class Theme {
     var lineSpacing: Double { didSet { save() } }
     var marker: Marker { didSet { save() } }
     var pageTurn: PageTurn { didSet { save() } }
+    var textAlign: TextAlign { didSet { save() } }
 
     var background: Color { Color(hex: backgroundHex) }
     var text: Color { Color(hex: textHex) }
@@ -181,6 +197,7 @@ final class Theme {
         lineSpacing = storedNumber(Keys.spacing, fallback: 8)
         marker = Marker(rawValue: defaults.string(forKey: Keys.marker) ?? "") ?? .color
         pageTurn = PageTurn(rawValue: defaults.string(forKey: Keys.pageTurn) ?? "") ?? .horizontal
+        textAlign = TextAlign(rawValue: defaults.string(forKey: Keys.textAlign) ?? "") ?? .ragged
     }
 
     private enum Keys {
@@ -193,6 +210,7 @@ final class Theme {
         static let spacing = "theme.spacing"
         static let marker = "theme.marker"
         static let pageTurn = "reading.pageTurn"
+        static let textAlign = "reading.textAlign"
     }
 
     private func save() {
@@ -206,6 +224,7 @@ final class Theme {
         defaults.set(lineSpacing, forKey: Keys.spacing)
         defaults.set(marker.rawValue, forKey: Keys.marker)
         defaults.set(pageTurn.rawValue, forKey: Keys.pageTurn)
+        defaults.set(textAlign.rawValue, forKey: Keys.textAlign)
     }
 }
 
