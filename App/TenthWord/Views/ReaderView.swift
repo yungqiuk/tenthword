@@ -43,6 +43,16 @@ struct ReaderView: View {
     @State private var showsPaywall = false
     @State private var glossZoneWarningShown = false
 
+    /// Смещение пальца при перелистывании и размер экрана, на который
+    /// уезжает страница. Оба нужны, чтобы анимация шла за пальцем,
+    /// а не проигрывалась вслепую после отпускания.
+    @State private var dragOffset: CGFloat = 0
+    @State private var screenSpan: CGSize = .zero
+
+    /// Кнопки громкости. Живут, только пока открыт читатель, и только
+    /// если читатель сам их включил в настройках.
+    @State private var volumeKeys = VolumeKeys()
+
     var body: some View {
         ZStack(alignment: .bottom) {
             theme.background.ignoresSafeArea()
@@ -58,16 +68,13 @@ struct ReaderView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar { toolbar }
-        .gesture(
-            DragGesture(minimumDistance: 30)
-                .onEnded { value in
-                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
-                    turnPage(forward: value.translation.width < 0)
-                }
-        )
+        .background {
+            if theme.volumeKeysTurnPages { VolumeKeysHost().allowsHitTesting(false) }
+        }
         .task { await load() }
-        .onAppear { trial.beginReadingSession() }
-        .onDisappear { trial.endReadingSession(); save() }
+        .onAppear { trial.beginReadingSession(); syncVolumeKeys() }
+        .onDisappear { trial.endReadingSession(); save(); volumeKeys.stop() }
+        .onChange(of: theme.volumeKeysTurnPages) { syncVolumeKeys() }
         .onChange(of: style) { Task { await rebuildLayout() } }
         .sheet(item: $tapped) { candidate in
             WordCard(candidate: candidate, theme: theme) { action in
@@ -87,16 +94,30 @@ struct ReaderView: View {
 
     // MARK: - Текст
 
+    /// Соседние страницы держим смонтированными: только так перелистывание
+    /// может идти за пальцем, а не проигрываться после отпускания.
+    private var visiblePages: [Int] {
+        [pageIndex - 1, pageIndex, pageIndex + 1].filter { pageStarts.indices.contains($0) }
+    }
+
     private var page: some View {
         GeometryReader { geometry in
             let size = CGSize(width: geometry.size.width - 44,
                               height: geometry.size.height - 36)
-            PageView(attributed: pageAttributed) { ordinal in
-                tapped = plan?.candidate(atOrdinal: ordinal)
+            ZStack {
+                ForEach(visiblePages, id: \.self) { index in
+                    PageView(attributed: attributed(ofPage: index)) { ordinal in
+                        tapped = plan?.candidate(atOrdinal: ordinal)
+                    }
+                    .frame(width: size.width, height: size.height, alignment: .topLeading)
+                    .padding(.horizontal, 22)
+                    .padding(.vertical, 18)
+                    .offset(shift(ofPage: index))
+                }
             }
-            .frame(width: size.width, height: size.height, alignment: .topLeading)
-            .padding(.horizontal, 22)
-            .padding(.vertical, 18)
+            .contentShape(Rectangle())
+            .gesture(turnGesture)
+            .task(id: geometry.size) { screenSpan = geometry.size }
             .task(id: size) {
                 // Поворот экрана или первый показ: страницы считаются
                 // под конкретную ширину и высоту.
@@ -107,13 +128,13 @@ struct ReaderView: View {
         }
     }
 
-    /// Текст текущей страницы. Вырезается из готовой книги — сборка целиком
+    /// Текст одной страницы. Вырезается из готовой книги — сборка целиком
     /// делается один раз на изменение процента, а не на каждый перелистыв.
-    private var pageAttributed: NSAttributedString {
-        guard let rendered, pageStarts.indices.contains(pageIndex) else {
+    private func attributed(ofPage index: Int) -> NSAttributedString {
+        guard let rendered, pageStarts.indices.contains(index) else {
             return NSAttributedString()
         }
-        let range = BookLayout.range(ofPage: pageIndex,
+        let range = BookLayout.range(ofPage: index,
                                      starts: pageStarts,
                                      length: rendered.attributed.length)
         return rendered.attributed.attributedSubstring(from: range)
@@ -130,18 +151,89 @@ struct ReaderView: View {
 
     // MARK: - Перелистывание
 
-    private func turnPage(forward: Bool) {
+    /// Насколько далеко уезжает страница: во всю ширину или во всю высоту.
+    private var span: CGFloat {
+        theme.pageTurn == .horizontal ? screenSpan.width : screenSpan.height
+    }
+
+    /// Положение страницы относительно текущей. Соседние стоят ровно
+    /// на экран в стороне и въезжают следом за пальцем.
+    private func shift(ofPage index: Int) -> CGSize {
+        let delta = CGFloat(index - pageIndex) * span + dragOffset
+        return theme.pageTurn == .horizontal
+            ? CGSize(width: delta, height: 0)
+            : CGSize(width: 0, height: delta)
+    }
+
+    private var turnGesture: some Gesture {
+        DragGesture(minimumDistance: 12)
+            .onChanged { value in
+                dragOffset = resisted(travel(value.translation))
+            }
+            .onEnded { value in
+                let travelled = travel(value.translation)
+                let predicted = travel(value.predictedEndTranslation)
+                // Либо утащили заметно, либо бросили с размаху — оба случая
+                // читатель считает перелистыванием.
+                let decided = abs(travelled) > span * 0.22 || abs(predicted) > span * 0.6
+                if decided, travelled != 0 {
+                    turnPage(forward: travelled < 0)
+                } else {
+                    settle()
+                }
+            }
+    }
+
+    /// Смещение вдоль той оси, по которой листаем.
+    private func travel(_ translation: CGSize) -> CGFloat {
+        theme.pageTurn == .horizontal ? translation.width : translation.height
+    }
+
+    /// На первой и последней странице палец вязнет — вместо мёртвого упора.
+    private func resisted(_ raw: CGFloat) -> CGFloat {
+        let beforeFirst = pageIndex == 0 && raw > 0
+        let afterLast = pageIndex >= pageStarts.count - 1 && raw < 0
+        return (beforeFirst || afterLast) ? raw / 3 : raw
+    }
+
+    private func settle() {
+        withAnimation(.interactiveSpring(response: 0.3, dampingFraction: 0.86)) {
+            dragOffset = 0
+        }
+    }
+
+    func turnPage(forward: Bool) {
         let next = pageIndex + (forward ? 1 : -1)
-        guard pageStarts.indices.contains(next) else { return }
+        guard pageStarts.indices.contains(next) else { settle(); return }
 
         // Бесплатный лимит считается перелистываниями, а не временем на экране.
         if forward, !trial.registerPageTurn() {
+            settle()
             showsPaywall = true
             return
         }
 
-        pageIndex = next
-        rememberPosition()
+        // Страница доезжает до края, и только потом лента переставляется
+        // на новую середину — иначе видно рывок.
+        withAnimation(.easeOut(duration: 0.26)) {
+            dragOffset = forward ? -span : span
+        } completion: {
+            var instant = Transaction()
+            instant.disablesAnimations = true
+            withTransaction(instant) {
+                pageIndex = next
+                dragOffset = 0
+            }
+            rememberPosition()
+        }
+    }
+
+    private func syncVolumeKeys() {
+        if theme.volumeKeysTurnPages {
+            volumeKeys.start { forward in turnPage(forward: forward) }
+        } else {
+            volumeKeys.stop()
+        }
     }
 
     /// Позиция читателя — смещение в исходном тексте книги.

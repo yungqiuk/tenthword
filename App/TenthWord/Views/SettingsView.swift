@@ -33,6 +33,19 @@ struct SettingsView: View {
                     }
                 }
 
+                Section("Перелистывание") {
+                    Picker("Направление", selection: $theme.pageTurn) {
+                        ForEach(Theme.PageTurn.allCases) { Text($0.label).tag($0) }
+                    }
+                    Toggle("Кнопками громкости", isOn: $theme.volumeKeysTurnPages)
+                    if theme.volumeKeysTurnPages {
+                        Text("Громче — вперёд, тише — назад. Пока читаете, "
+                             + "кнопки не меняют громкость.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
                 Section("Шрифт") {
                     Picker("Гарнитура", selection: $theme.fontID) {
                         ForEach(Theme.FontChoice.all) { Text($0.name).tag($0.id) }

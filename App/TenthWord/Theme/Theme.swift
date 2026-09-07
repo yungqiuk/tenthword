@@ -55,6 +55,21 @@ final class Theme {
         }
     }
 
+    // MARK: - Как перелистывается страница
+
+    enum PageTurn: String, CaseIterable, Identifiable {
+        case horizontal   // страница уезжает вбок, как в бумажной книге
+        case vertical     // вверх-вниз: удобно большим пальцем одной рукой
+
+        var id: String { rawValue }
+        var label: String {
+            switch self {
+            case .horizontal: return "Вбок"
+            case .vertical: return "Вверх-вниз"
+            }
+        }
+    }
+
     // MARK: - Шрифты
     //
     // Системные и те, что есть на устройстве без докачки. Свои гарнитуры добавятся
@@ -85,6 +100,12 @@ final class Theme {
     var fontSize: Double { didSet { save() } }
     var lineSpacing: Double { didSet { save() } }
     var marker: Marker { didSet { save() } }
+    var pageTurn: PageTurn { didSet { save() } }
+
+    /// Перелистывание кнопками громкости. По умолчанию выключено:
+    /// правило App Store 2.5.9 запрещает менять назначение системных кнопок,
+    /// и включать это за читателя мы не вправе. Подробности — docs/ROADMAP.md.
+    var volumeKeysTurnPages: Bool { didSet { save() } }
 
     var background: Color { Color(hex: backgroundHex) }
     var text: Color { Color(hex: textHex) }
@@ -164,6 +185,8 @@ final class Theme {
         fontSize = storedNumber(Keys.size, fallback: 18)
         lineSpacing = storedNumber(Keys.spacing, fallback: 8)
         marker = Marker(rawValue: defaults.string(forKey: Keys.marker) ?? "") ?? .color
+        pageTurn = PageTurn(rawValue: defaults.string(forKey: Keys.pageTurn) ?? "") ?? .horizontal
+        volumeKeysTurnPages = defaults.bool(forKey: Keys.volumeKeys)
     }
 
     private enum Keys {
@@ -175,6 +198,8 @@ final class Theme {
         static let size = "theme.size"
         static let spacing = "theme.spacing"
         static let marker = "theme.marker"
+        static let pageTurn = "reading.pageTurn"
+        static let volumeKeys = "reading.volumeKeys"
     }
 
     private func save() {
@@ -187,6 +212,8 @@ final class Theme {
         defaults.set(fontSize, forKey: Keys.size)
         defaults.set(lineSpacing, forKey: Keys.spacing)
         defaults.set(marker.rawValue, forKey: Keys.marker)
+        defaults.set(pageTurn.rawValue, forKey: Keys.pageTurn)
+        defaults.set(volumeKeysTurnPages, forKey: Keys.volumeKeys)
     }
 }
 

@@ -140,11 +140,61 @@ def clean_gloss(text):
     return text.strip(" .;:,")
 
 
+# Слова, с которых начинается не перевод, а описание словарной статьи.
+# «Used to express indebtedness», «third-person masculine singular pronoun»,
+# «Generic demonstrative pronoun» — всё это в книге читается как поломка.
+DEFINITION_MARKERS = (
+    "used", "usually", "often", "generic", "indicates", "indicating", "denotes",
+    "denoting", "expressing", "expresses", "expression", "form of", "forms of",
+    "plural of", "singular of", "diminutive of", "augmentative of", "name of",
+    "genitive", "dative", "accusative", "instrumental", "prepositional",
+    "first-person", "second-person", "third-person", "alternative", "obsolete",
+    "abbreviation", "acronym", "initialism", "synonym", "misspelling",
+    "a type of", "any of", "one of", "the act of", "the state of", "relating to",
+)
+
+
+def is_usable_english(word):
+    """Годится ли строка на подстановку прямо в текст книги.
+
+    Викисловарь мешает переводы с толкованиями: у «знать» первым значением
+    стоит «know: to be familiar with or accustomed to a person». Одно слово
+    подставить можно, определение — нет. Всё, что не похоже на слово,
+    выбрасывается целиком: пустая ячейка лучше мусора в тексте.
+    """
+    if not word or not word.isascii():
+        return False
+    lowered = word.lower()
+    if any(ch in word for ch in ".?!\"'()[]0123456789/"):
+        return False
+    if len(word.split()) > 2:          # «cook cap» терпимо, «it is necessary» нет
+        return False
+    if len(lowered) < 2:               # одиночные буквы — это разметка, не слово
+        return False
+    for marker in DEFINITION_MARKERS:
+        if lowered.startswith(marker):
+            return False
+    return True
+
+
 def primary_word(gloss, pos):
     """Первый термин толкования — его и подставляем в текст."""
+    # «know: to be familiar with…» и «third-person pronoun: he» — в одном случае
+    # слово слева, в другом справа. Берём ту сторону, где слов меньше.
+    if ":" in gloss:
+        left, right = gloss.split(":", 1)
+        left, right = left.strip(), right.strip()
+        if left and right:
+            gloss = left if len(left.split()) <= len(right.split()) else right
+        else:
+            gloss = left or right
     for separator in (";", ","):
         if separator in gloss:
             gloss = gloss.split(separator)[0]
+    # «finger or toe» — тоже перечисление, просто словом. Берём первый вариант,
+    # иначе частые слова вроде «палец» вылетают целиком.
+    if " or " in gloss:
+        gloss = gloss.split(" or ")[0]
     word = gloss.strip()
     lowered = word.lower()
     # Викисловарь толкует глаголы инфинитивом с частицей: «to run».
@@ -242,7 +292,7 @@ def parse_wiktionary(path, limit=None):
                 continue
             gloss = clean_gloss(glosses[0])
             english = primary_word(gloss, pos)
-            if not english or not english.isascii():
+            if not is_usable_english(english):
                 continue
 
             entries[lemma] = {
@@ -333,6 +383,43 @@ def write_database(path, entries, ranks, overrides, source_note):
 
 # ── Точка входа ───────────────────────────────────────────────────────────────
 
+def repair_database(path):
+    """Пересобирает поле english в уже готовом словаре, не качая ничего заново.
+
+    Нужно, когда правило отбора изменилось, а качать гигабайт и ждать
+    сорок минут ради семи процентов записей незачем. Толкование (`gloss`)
+    в базе сохранено целиком, так что перевод пересчитывается из него.
+    """
+    db = sqlite3.connect(path)
+    rows = db.execute("SELECT lemma, english, gloss, pos FROM entries").fetchall()
+    fixed, dropped, untouched = [], [], 0
+    for lemma, english, gloss, pos in rows:
+        candidate = primary_word(gloss, pos)
+        if not is_usable_english(candidate):
+            dropped.append((lemma, english))
+        elif candidate != english:
+            fixed.append((lemma, english, candidate))
+        else:
+            untouched += 1
+
+    db.executemany("UPDATE entries SET english = ? WHERE lemma = ?",
+                   [(new, lemma) for lemma, _, new in fixed])
+    db.executemany("DELETE FROM entries WHERE lemma = ?",
+                   [(lemma,) for lemma, _ in dropped])
+    db.commit()
+    db.execute("VACUUM")
+    db.close()
+
+    print("Починка словаря:", path)
+    print("  без изменений:", untouched)
+    print("  исправлено:   ", len(fixed))
+    for lemma, was, now in fixed[:8]:
+        print(f"      {lemma}: «{was}» → «{now}»")
+    print("  выброшено:    ", len(dropped))
+    for lemma, was in dropped[:8]:
+        print(f"      {lemma}: «{was}»")
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -346,7 +433,13 @@ def main():
                         help="собрать из tools/seed_ru_en.txt, без сети")
     parser.add_argument("--limit", type=int, default=None,
                         help="взять только N лемм — для быстрой проверки")
+    parser.add_argument("--repair", action="store_true",
+                        help="пересчитать поле english в готовом словаре, без сети")
     args = parser.parse_args()
+
+    if args.repair:
+        repair_database(args.out)
+        return
 
     if args.sample:
         print("Режим затравки — 120 слов, без сети.")
