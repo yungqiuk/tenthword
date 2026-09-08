@@ -90,6 +90,9 @@ enum BookLayout {
 
     // MARK: - Разбивка на страницы
 
+    /// Через сколько посчитанных страниц отдавать промежуточный результат.
+    private static let partialStep = 20
+
     /// Начала страниц в смещениях собранного текста.
     ///
     /// Считается настоящей вёрсткой TextKit 2 под конкретный размер экрана:
@@ -99,8 +102,15 @@ enum BookLayout {
     /// а не в номере страницы.
     ///
     /// Вызывать вне главного потока: на романе это сотни миллисекунд.
-    static func pageStarts(for attributed: NSAttributedString, size: CGSize) -> [Int] {
+    ///
+    /// `onPartial` получает готовую часть разбивки по ходу счёта. Начала страниц
+    /// считаются слева направо и назад не меняются, поэтому уже посчитанным
+    /// страницам можно верить и показывать их читателю, не дожидаясь конца книги.
+    static func pageStarts(for attributed: NSAttributedString,
+                           size: CGSize,
+                           onPartial: (([Int]) -> Void)? = nil) -> [Int] {
         guard attributed.length > 0, size.width > 1, size.height > 1 else { return [0] }
+
 
         let storage = NSTextContentStorage()
         let layout = NSTextLayoutManager()
@@ -134,6 +144,9 @@ enum BookLayout {
                     if offset > starts.last! {
                         starts.append(offset)
                         pageTop = lineTop
+                        // Порциями, а не на каждой странице: сообщение
+                        // на другой поток стоит дороже самой страницы.
+                        if starts.count % Self.partialStep == 0 { onPartial?(starts) }
                     }
                 }
             }

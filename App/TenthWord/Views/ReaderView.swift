@@ -283,7 +283,10 @@ struct ReaderView: View {
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
         ToolbarItem(placement: .principal) {
-            Text("\(pageIndex + 1) / \(max(pageStarts.count, 1))")
+            // Пока книга досчитывается, вместо числа страниц — многоточие:
+            // растущее на глазах «560» читалось бы как сбой.
+            Text(isPaginating ? "\(pageIndex + 1) / …"
+                              : "\(pageIndex + 1) / \(max(pageStarts.count, 1))")
                 .font(.system(size: 11, weight: .medium, design: .monospaced))
                 .foregroundStyle(theme.text.opacity(0.6))
         }
@@ -349,6 +352,10 @@ struct ReaderView: View {
     /// Вызывается при открытии, смене процента, смене оформления и повороте
     /// экрана. Вся работа — в отдельной задаче: TextKit верстает роман
     /// за сотни миллисекунд, и держать на это главный поток нельзя.
+    ///
+    /// Разбивка приходит порциями. Читателю нужна его страница, а не последняя
+    /// страница книги, поэтому показываем текст, как только посчитан кусок,
+    /// в котором эта страница лежит; остальное досчитывается в фоне.
     private func rebuildLayout() async {
         guard let prepared, let plan, !source.isEmpty,
               layoutSize.width > 1, layoutSize.height > 1 else { return }
@@ -356,34 +363,73 @@ struct ReaderView: View {
         isPaginating = true
         defer { isPaginating = false }
 
+        let openedAt = Date()
         let text = source
         let size = layoutSize
         let currentStyle = style
         let offset = book.readingOffset
 
-        let (renderedBook, starts, index) = await Task.detached(priority: .userInitiated) {
+        let renderedBook = await Task.detached(priority: .userInitiated) {
             let renderStarted = Date()
-            let rendered = BookLayout.render(source: text,
-                                             prepared: prepared,
-                                             plan: plan,
-                                             style: currentStyle)
+            let result = BookLayout.render(source: text,
+                                           prepared: prepared,
+                                           plan: plan,
+                                           style: currentStyle)
             #if DEBUG
             print("⏱ сборка текста: \(Int(Date().timeIntervalSince(renderStarted) * 1000)) мс")
-            let paginateStarted = Date()
             #endif
-            let starts = BookLayout.pageStarts(for: rendered.attributed, size: size)
-            #if DEBUG
-            print("⏱ разбивка на \(starts.count) страниц: \(Int(Date().timeIntervalSince(paginateStarted) * 1000)) мс")
-            #endif
-            // Возвращаем читателя на то же место книги, а не на тот же номер страницы.
-            let target = rendered.renderedOffset(forSource: offset)
-            let index = starts.lastIndex { $0 <= target } ?? 0
-            return (rendered, starts, index)
+            return result
         }.value
 
+        // Возвращаем читателя на то же место книги, а не на тот же номер страницы.
+        let target = renderedBook.renderedOffset(forSource: offset)
+        let attributed = renderedBook.attributed
+
+        let portions = AsyncStream<[Int]> { continuation in
+            Task.detached(priority: .userInitiated) {
+                let paginateStarted = Date()
+                let starts = BookLayout.pageStarts(for: attributed, size: size) { partial in
+                    continuation.yield(partial)
+                }
+                #if DEBUG
+                print("⏱ разбивка на \(starts.count) страниц: "
+                      + "\(Int(Date().timeIntervalSince(paginateStarted) * 1000)) мс")
+                #endif
+                continuation.yield(starts)
+                continuation.finish()
+            }
+        }
+
         rendered = renderedBook
-        pageStarts = starts
-        pageIndex = index
+        var settledOnPage = false
+        var complete: [Int] = []
+
+        for await starts in portions {
+            complete = starts
+            guard !settledOnPage else { continue }
+
+            // Ждём порцию, в которую попало место читателя. Начала страниц
+            // назад не меняются, поэтому номер, посчитанный по куску,
+            // останется верным и после того, как досчитается остальное.
+            pageStarts = starts
+            if starts.last ?? 0 > target {
+                pageIndex = starts.lastIndex { $0 <= target } ?? 0
+                settledOnPage = true
+                isLoading = false
+                #if DEBUG
+                print("⏱ страница на экране, посчитано \(starts.count): "
+                      + "\(Int(Date().timeIntervalSince(openedAt) * 1000)) мс")
+                #endif
+            }
+        }
+
+        // Показали страницу — дальше молчим до конца счёта: перерисовывать
+        // экран на каждой порции незачем, читатель за 0,4 секунды
+        // до двадцатой страницы не долистает.
+        pageStarts = complete
+        if !settledOnPage {
+            pageIndex = complete.lastIndex { $0 <= target } ?? 0
+        }
     }
 
     private var learnedLemmas: Set<String> {

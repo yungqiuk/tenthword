@@ -27,9 +27,17 @@ final class PerformanceProbe: XCTestCase {
         measure("токенизация") { tokens = Tokenizer.tokenize(text) }
         print("   слов: \(tokens.count)")
 
-        let lemmatizer = AppleLemmatizer(language: .russian) { dictionary.lemmaOverride(for: $0) }
+        let single = AppleLemmatizer(language: .russian) { dictionary.lemmaOverride(for: $0) }
+        single.maximumChunks = 1
         var lemmas: [String] = []
-        measure("лемматизация") { lemmas = lemmatizer.lemmas(for: tokens, in: text) }
+        measure("лемматизация в один поток") { lemmas = single.lemmas(for: tokens, in: text) }
+
+        let parallel = AppleLemmatizer(language: .russian) { dictionary.lemmaOverride(for: $0) }
+        var parallelLemmas: [String] = []
+        measure("лемматизация по ядрам (\(parallel.maximumChunks))") {
+            parallelLemmas = parallel.lemmas(for: tokens, in: text)
+        }
+        XCTAssertEqual(lemmas, parallelLemmas, "разбор разошёлся")
 
         measure("словарь, как сейчас") {
             var found = 0
