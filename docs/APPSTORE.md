@@ -472,6 +472,28 @@ xcodebuild -exportArchive -archivePath build/TenthWord.xcarchive -exportOptionsP
 Промотекст и ключевые слова, в отличие от описания, меняются без новой
 версии — прямо на опубликованной.
 
+### What's New для 1.0.1
+
+Поле заполняется в обеих локализациях. Русская:
+
+```
+• Выключка текста по ширине — на выбор, рядом с размером шрифта.
+• Перелистывание с анимацией: вбок или вверх-вниз, тоже на выбор.
+• Оформление открывается прямо из книги — выходить на полку больше не нужно.
+• Книга открывается заметно быстрее.
+• Вычищен словарь: убраны толкования вместо слов и латиница вместо перевода.
+```
+
+Английская:
+
+```
+• Justified text, next to the font size setting.
+• Animated page turns: sideways or up-and-down, your choice.
+• Appearance settings now open from inside the book.
+• Books open noticeably faster.
+• Dictionary cleanup: no more definitions or transliterations in place of words.
+```
+
 ## Чего в сборке сознательно нет
 
 - **iPad.** Заявлять поддержку — значит показывать вёрстку в две колонки
