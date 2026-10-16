@@ -8,6 +8,7 @@ struct TenthWordApp: App {
     @State private var trial = TrialGuard()
     @State private var store = PurchaseStore()
     @State private var dictionaries = DictionaryProvider()
+    @State private var inbox = Inbox()
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -18,6 +19,7 @@ struct TenthWordApp: App {
                 .environment(trial)
                 .environment(store)
                 .environment(dictionaries)
+                .environment(inbox)
                 .preferredColorScheme(theme.contrastRatio > 0 && isDarkBackground ? .dark : .light)
                 .task {
                     await store.load()
@@ -43,18 +45,36 @@ struct RootView: View {
 
     @Environment(Theme.self) private var theme
     @Environment(DictionaryProvider.self) private var dictionaries
+    @Environment(Inbox.self) private var inbox
+    @Environment(\.modelContext) private var context
+
+    enum Tab { case shelf, vocabulary, settings }
+
+    @State private var tab = Tab.shelf
 
     var body: some View {
-        TabView {
+        TabView(selection: $tab) {
             LibraryView()
+                .tag(Tab.shelf)
                 .tabItem { Label("Полка", systemImage: "books.vertical") }
             VocabularyView()
+                .tag(Tab.vocabulary)
                 .tabItem { Label("Словарь", systemImage: "character.book.closed") }
             SettingsView()
+                .tag(Tab.settings)
                 .tabItem { Label("Настройки", systemImage: "slider.horizontal.3") }
         }
         .tint(theme.accent)
         .overlay(alignment: .top) { dictionaryWarning }
+        // Книга пришла из другого приложения. Разбираем здесь, а не на полке:
+        // полка может быть закрыта открытой книгой, и тогда её код не работает.
+        .onOpenURL { url in
+            tab = .shelf
+            inbox.receive(url)
+            inbox.drain(into: context)
+        }
+        // То, что осталось в Inbox с прошлых запусков.
+        .task { inbox.drain(into: context) }
     }
 
     /// Без словаря приложение работает как обычная читалка. Это лучше, чем падать

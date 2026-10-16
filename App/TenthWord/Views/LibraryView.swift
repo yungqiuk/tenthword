@@ -11,17 +11,20 @@ struct LibraryView: View {
     @Environment(\.modelContext) private var context
     @Environment(Theme.self) private var theme
     @Environment(TrialGuard.self) private var trial
+    @Environment(Inbox.self) private var inbox
 
     @Query(sort: \Book.lastOpenedAt, order: .reverse) private var books: [Book]
 
     @State private var isImporting = false
-    @State private var importError: String?
-    @State private var openedBook: Book?
 
     private let columns = [GridItem(.adaptive(minimum: 140), spacing: 16)]
 
     var body: some View {
-        NavigationStack {
+        // Путь навигации лежит в `Inbox`: книгу могут прислать извне, когда
+        // полка закрыта другой книгой, и подменить её должно что-то живое.
+        @Bindable var inbox = inbox
+
+        return NavigationStack(path: $inbox.path) {
             Group {
                 if books.isEmpty {
                     emptyShelf
@@ -44,13 +47,18 @@ struct LibraryView: View {
                           allowsMultipleSelection: true) { result in
                 importFiles(result)
             }
-            .alert("Не получилось", isPresented: .constant(importError != nil)) {
-                Button("Понятно") { importError = nil }
+            .alert("Не получилось", isPresented: .constant(inbox.failure != nil)) {
+                Button("Понятно") { inbox.failure = nil }
             } message: {
-                Text(importError ?? "")
+                Text(inbox.failure ?? "")
             }
-            .navigationDestination(item: $openedBook) { book in
+            .navigationDestination(for: Book.self) { book in
+                // Своё состояние на каждую книгу. Без этого при замене книги
+                // в пути (книгу прислали через «Открыть в…» поверх открытой)
+                // SwiftUI переиспользует тот же ReaderView, и на экране
+                // остаётся разобранный текст предыдущей книги.
                 ReaderView(book: book)
+                    .id(book.persistentModelID)
             }
         }
     }
@@ -63,7 +71,7 @@ struct LibraryView: View {
                 ForEach(books) { book in
                     BookCard(book: book, theme: theme) {
                         book.lastOpenedAt = .now
-                        openedBook = book
+                        inbox.path = [book]
                     }
                     .contextMenu {
                         Button("Удалить", systemImage: "trash", role: .destructive) {
@@ -103,10 +111,10 @@ struct LibraryView: View {
             let service = LibraryService(context: context)
             for url in urls {
                 do { _ = try service.addBook(from: url) }
-                catch { importError = error.localizedDescription }
+                catch { inbox.failure = error.localizedDescription }
             }
         case .failure(let error):
-            importError = error.localizedDescription
+            inbox.failure = error.localizedDescription
         }
     }
 }

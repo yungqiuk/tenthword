@@ -89,6 +89,15 @@ struct LibraryService {
     /// открытии незачем, а места плоский текст занимает меньше исходника.
     func addBook(from url: URL) throws -> Book {
         let parsed = try BookImporter.read(url)
+
+        // Ту же книгу легко прислать дважды — «Открыть в…» делается в один тап.
+        // Вторую карточку на полке читатель воспримет как ошибку, а прочитанное
+        // в ней не сохранится. Совпали название и длина — это та же книга.
+        if let existing = existingBook(title: parsed.title, length: parsed.text.count) {
+            discardInboxCopy(url)
+            return existing
+        }
+
         let fileName = try BookStorage.save(text: parsed.text,
                                             suggestedName: safeName(parsed.title))
 
@@ -101,13 +110,32 @@ struct LibraryService {
 
         context.insert(book)
         try context.save()
+        discardInboxCopy(url)
         return book
+    }
+
+    /// Файл, присланный через «Открыть в…», система кладёт в `Documents/Inbox`
+    /// и больше за ним не следит — убирать за собой должны мы, иначе книги
+    /// копятся там вторым экземпляром и занимают место.
+    ///
+    /// Файл, открытый на месте (в Files, в iCloud), не трогаем: он чужой,
+    /// а текст книги у нас уже сохранён отдельно.
+    private func discardInboxCopy(_ url: URL) {
+        let inbox = URL.documentsDirectory.appending(path: "Inbox").standardizedFileURL
+        guard url.standardizedFileURL.path.hasPrefix(inbox.path + "/") else { return }
+        try? FileManager.default.removeItem(at: url)
     }
 
     func delete(_ book: Book) {
         BookStorage.delete(book.fileName)
         context.delete(book)
         try? context.save()
+    }
+
+    private func existingBook(title: String, length: Int) -> Book? {
+        let descriptor = FetchDescriptor<Book>(
+            predicate: #Predicate { $0.title == title && $0.characterCount == length })
+        return try? context.fetch(descriptor).first
     }
 
     private func safeName(_ title: String) -> String {
